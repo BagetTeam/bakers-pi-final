@@ -26,7 +26,17 @@ class LineTracker:
             "WHITE": (255.0, 255.0, 255.0),
             "ORANGE": (255.0, 128.0, 0.0),
         }
+        self.normalized_refs = {}
+        for name, (r, g, b) in self.refs.items():
+            self.normalized_refs[name] = self.__normalize_colour(r, g, b)
 
+    def __normalize_colour(self, r, g, b):
+        denom = r + g + b
+        if denom <= 10:
+            return "UNKNOWN"
+        rn, gn, bn = r / denom, g / denom, b / denom
+        return rn, gn, bn
+    
     def __get_colour(self):
         """
         Detect the color currently seen by the EV3 color sensor.
@@ -48,15 +58,14 @@ class LineTracker:
             return
 
         # normalize RGB values to unit vectors
-        denom = r + g + b
-        if denom <= 10:
+        rn, gn, bn = self.__normalize_colour(r, g, b)
+        if rn == "UNKNOWN":
             return "UNKNOWN"
-        rn, gn, bn = r / denom, g / denom, b / denom
 
         # Find the closest reference color by Euclidean distance
         best_name = "UNKNOWN"
         closest_dist = math.inf
-        for name, (rr, gg, bb) in normalized_refs.items():
+        for name, (rr, gg, bb) in self.normalized_refs.items():
             dist = math.sqrt((rn - rr) ** 2 + (gn - gg) ** 2 + (bn - bb) ** 2)
             if dist < closest_dist:
                 closest_dist = dist
