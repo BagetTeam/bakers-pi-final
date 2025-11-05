@@ -17,27 +17,65 @@ class LineTracker:
         self.black = None
         self.white = None
         self.threshold = 50.0
+        self.refs = {
+            "RED": (255.0, 0.0, 0.0),
+            "GREEN": (0.0, 255.0, 0.0),
+            "BLUE": (0.0, 0.0, 255.0),
+            "YELLOW": (255.0, 255.0, 0.0),
+            "BLACK": (0.0, 0.0, 0.0),
+            "WHITE": (255.0, 255.0, 255.0),
+            "ORANGE": (255.0, 128.0, 0.0),
+        }
 
-    def _read_reflection(self):
-        s = self.sensor
-        # try common attribute/method names used by different EV3 libs
-        for attr in ("reflected_light_intensity", "reflection", "reflected_light", "value", "read"):
-            try:
-                val = getattr(s, attr)
-                # if callable, call it
-                if callable(val):
-                    val = val()
-                return float(val)
-            except Exception:
-                pass
-        # last resort: some sensors expose values as a tuple/list at `value(0)` or `values`
-        try:
-            if hasattr(s, "value") and callable(s.value):
-                v = s.value(0)
-                return float(v)
-        except Exception:
-            pass
-        raise RuntimeError("Could not read reflection from sensor with known API")
+    def __get_colour(self):
+        """
+        Detect the color currently seen by the EV3 color sensor.
+
+        The function reads raw RGB values from the sensor, normalizes them,
+        and compares them against reference unit vectors using Euclidean distance.
+        It returns the name of the closest matching color if within a threshold.
+
+        Args:
+            sensor (EV3ColorSensor): The EV3 color sensor instance.
+
+        Returns:
+            str: The detected color name ("RED", "GREEN", "BLUE", "YELLOW", or "UNKNOWN").
+        """
+        sensor = self.sensor
+        r, g, b = sensor.get_rgb()
+        # handle zero
+        if r is None or g is None or b is None:
+            return
+
+        # normalize RGB values to unit vectors
+        denom = r + g + b
+        if denom <= 10:
+            return "UNKNOWN"
+        rn, gn, bn = r / denom, g / denom, b / denom
+
+        # Find the closest reference color by Euclidean distance
+        best_name = "UNKNOWN"
+        closest_dist = math.inf
+        for name, (rr, gg, bb) in normalized_refs.items():
+            dist = math.sqrt((rn - rr) ** 2 + (gn - gg) ** 2 + (bn - bb) ** 2)
+            if dist < closest_dist:
+                closest_dist = dist
+                best_name = name
+        
+        # threshold to avoid misclassifying ambiguous readings and noise
+        if best_name == "YELLOW" and not (0.22 < dist < 0.35):
+            return "UNKNOWN"
+        elif best_name == "RED" and closest_dist > 0.2:
+            return "UNKNOWN"
+        elif best_name == "GREEN" and not (0.3 < closest_dist < 0.45):
+            return "UNKNOWN"
+        elif best_name == "BLUE" and not (0.45 < closest_dist < 0.6):
+            return "UNKNOWN"
+
+        if r + g + b < 69:
+            return "UNKNOWN"
+
+        return best_name
 
     def calibrate(self, samples=20, delay=0.1):
         input("Place sensor over BLACK (line) and press Enter to start sampling...")
