@@ -16,10 +16,18 @@ class RobotMovement:
         self.left_motor.set_power(0)
         self.right_motor.set_power(0)
 
-    def turn_right(self, power: int):
+    def intersection_turn_right(self, power: int):
         self.left_motor.set_power(power)
         self.right_motor.set_power(-power)
 
-    def turn_left(self, power: int):
+    def intersection_turn_left(self, power: int):
         self.left_motor.set_power(-power)
         self.right_motor.set_power(power)
+    
+    def corner_turn_right(self, power: int):
+        self.left_motor.set_power(0)
+        self.right_motor.set_power(power)
+
+    def corner_turn_left(self, power: int):
+        self.left_motor.set_power(power)
+        self.right_motor.set_power(0)

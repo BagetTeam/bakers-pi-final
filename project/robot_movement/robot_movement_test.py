@@ -7,17 +7,31 @@ class MovementTest:
         self.touch2 = touch_sensor2
         self.robot_movement = rbt_mvt.RobotMovement(motor1, motor2)
 
-    def turning_test(self, TURNING_POWER):
+    def intersection_turning_test(self, TURNING_POWER):
         RIGHT_SENSOR = self.touch1
         LEFT_SENSOR = self.touch2
 
         # Main loop: runs indefinitely
         while True: 
             while RIGHT_SENSOR.is_pressed():
-                self.robot_movement.turn_right(TURNING_POWER)
+                self.robot_movement.intersection_turn_right(TURNING_POWER)
                 sleep(0.1)
             while LEFT_SENSOR.is_pressed():
-                self.robot_movement.turn_left(TURNING_POWER)
+                self.robot_movement.intersection_turn_left(TURNING_POWER)
+                sleep(0.1)
+            self.robot_movement.stop_move()
+
+    def corner_turning_test(self, TURNING_POWER):
+        RIGHT_SENSOR = self.touch1
+        LEFT_SENSOR = self.touch2
+
+        # Main loop: runs indefinitely
+        while True: 
+            while RIGHT_SENSOR.is_pressed():
+                self.robot_movement.corner_turn_right(TURNING_POWER)
+                sleep(0.1)
+            while LEFT_SENSOR.is_pressed():
+                self.robot_movement.corner_turn_left(TURNING_POWER)
                 sleep(0.1)
             self.robot_movement.stop_move()
 

@@ -18,7 +18,7 @@ def main():
 
 
     try:
-        movement_test.turning_test(TURNING_POWER=25)
+        movement_test.corner_turning_test(TURNING_POWER=25)
     except BaseException:
         pass
     finally:
