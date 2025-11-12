@@ -4,9 +4,9 @@ class ColorSensor:
     def __init__(self, sensor: EV3ColorSensor):
         wait_ready_sensors()
         self.sensor = sensor
-        self.sensor.set_mode("RGB-RAW")
 
-    def get_rgb(self):
-        return self.sensor.get_value(0), self.sensor.get_value(1), self.sensor.get_value(2)
+    def get_rgb(self) -> list[float]:
+        return self.sensor.get_rgb()
     
+        
     
