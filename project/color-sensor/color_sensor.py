@@ -40,6 +40,13 @@ class ColorSensor:
             return (0.0, 0.0, 0.0)
         return (value / total for value in rgb)
     
+    def filter_data(r, g, b):
+        if r is not None and g is not None and b is not None:
+            if r > 0 and g > 0 and b > 0:
+                return True
+        return False
+
+    
     def is_color_detected(self, target_color: str, threshold: float = 0.1) -> bool:
         rgb = self.get_rgb()
         normalized_rgb = self.__normalize_rgb(rgb)
