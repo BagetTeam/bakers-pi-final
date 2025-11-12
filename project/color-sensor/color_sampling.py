@@ -3,7 +3,7 @@ from utils.brick import EV3ColorSensor, reset_brick, wait_ready_sensors, TouchSe
 from color_sensor import ColorSensor
 
 DELAY_SEC = 0.01  # seconds of delay between measurements
-DATA_FILE_BASE_PATH = "../data_analysis/color_data/"
+DATA_FILE_BASE_PATH = "../../data_analysis/color_data/"
 
 # complete this based on your hardware setup
 COLOR_SENSOR = EV3ColorSensor(1)
