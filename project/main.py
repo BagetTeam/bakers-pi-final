@@ -1,21 +1,23 @@
 from utils.brick import (
     Motor,
+    TouchSensor,
     reset_brick,
     wait_ready_sensors,
-    TouchSensor,
+    configure_ports,
 )
 from robot_movement import robot_movement_test as robot_move_test
 
-TOUCH1 = TouchSensor(1)
-TOUCH2 = TouchSensor(2)
-MOTOR1 = Motor("A")
-MOTOR2 = Motor("D")
+TOUCH1, TOUCH2, MOTOR1, MOTOR2 = configure_ports(
+    PORT_1=TouchSensor,
+    PORT_2=TouchSensor,
+    PORT_A=Motor,
+    PORT_D=Motor,
+    wait=True,
+    print_status=True,
+)
 
 def main():
-    wait_ready_sensors(True)
-    print("Done waiting")
     movement_test = robot_move_test.MovementTest(TOUCH1, TOUCH2, MOTOR1, MOTOR2)
-
 
     try:
         movement_test.corner_turning_test(TURNING_POWER=25)
