@@ -1,5 +1,5 @@
 from time import sleep
-from project.utils.brick import (
+from utils.brick import (
     Motor,
 )
 

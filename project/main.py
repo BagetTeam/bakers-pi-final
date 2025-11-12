@@ -12,10 +12,10 @@ MOTOR1 = Motor("A")
 MOTOR2 = Motor("D")
 
 def main():
-    movement_test = robot_move_test.MovementTest(TOUCH1, TOUCH2, MOTOR1, MOTOR2)
-
     wait_ready_sensors(True)
     print("Done waiting")
+    movement_test = robot_move_test.MovementTest(TOUCH1, TOUCH2, MOTOR1, MOTOR2)
+
 
     try:
         movement_test.turning_test(TURNING_POWER=25)
@@ -25,3 +25,6 @@ def main():
         print("Done testing")
         reset_brick()  # Turn off everything on the brick's hardware, and reset it
         exit()
+
+if __name__ == "__main__":
+    main()
