@@ -8,6 +8,7 @@ from project.utils.brick import (
 COLOR_SENSOR = EV3ColorSensor(2)
 MOTOR = Motor("A")
 
+# line tracking
 class LineTracker:
     def __init__(self, sensor=COLOR_SENSOR, motor=MOTOR, kp=0.8, base=0.0):
         self.sensor = sensor
