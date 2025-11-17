@@ -34,7 +34,8 @@ class ColorSensor:
     def __handle_threshold(self, color):
         return color
 
-    def classify_color(self, r, g, b) -> str:
+    def classify_color(self, rgb) -> str:
+        r, g, b = self.__normalize_rgb(rgb)
         color_found = "UNKNOWN"
         closest_dist = math.inf
         for name, (rr, gg, bb) in ColorSensor.REFS.items():
@@ -50,7 +51,7 @@ class ColorSensor:
         if not self.__filter_data(*rgb):
             return "UNKNOWN"
         print("HAS BEEN FILTERED")
-        color_found = self.classify_color(*rgb)
+        color_found = self.classify_color(rgb)
         print(color_found)
         color_found = self.__handle_threshold(color_found)
         # extra things
