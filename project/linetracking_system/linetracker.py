@@ -1,4 +1,4 @@
-from utils.brick import Motor
+from utils.brick import Motor, EV3ColorSensor
 from robot_movement.robot_movement import RobotMovement
 from color_sensor.color_sensor import ColorSensor
 from time import sleep

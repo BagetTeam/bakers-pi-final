@@ -12,7 +12,6 @@ class ColorSensor:
     } # temporary
 
     def __init__(self, sensor: EV3ColorSensor):
-        wait_ready_sensors()
         self.sensor = sensor
         self.current_color = "UNKNOWN"
         
