@@ -1,61 +1,59 @@
+import math
 from utils.brick import EV3ColorSensor, wait_ready_sensors
 
 class ColorSensor:
     REFS = {
-        "RED": (255.0, 0.0, 0.0),
-        "GREEN": (0.0, 255.0, 0.0),
-        "BLUE": (0.0, 0.0, 255.0),
-        "YELLOW": (255.0, 255.0, 0.0),
+        "RED": (1.0, 0.0, 0.0),
+        "GREEN": (0.0, 1.0, 0.0),
+        "BLUE": (0.0, 0.0, 1.0),
+        "YELLOW": (1.0, 1.0, 0.0),
         "BLACK": (0.0, 0.0, 0.0),
-        "WHITE": (255.0, 255.0, 255.0)
-    }
-
-    NORMALIZED_REFS = {key: ColorSensor.normalize_rgb(value) for key, value in REFS.items()}
+        "WHITE": (1.0, 1.0, 1.0)
+    } # temporary
 
     def __init__(self, sensor: EV3ColorSensor):
         wait_ready_sensors()
         self.sensor = sensor
+        self.current_color = "UNKNOWN"
         
     def get_rgb(self) -> list[float]:
         return self.sensor.get_rgb()
-    
-    def classify_color(self) -> str:
-        rgb = self.get_rgb()
-        red, green, blue = rgb
 
-        if red > green and red > blue:
-            return "red"
-        elif green > red and green > blue:
-            return "green"
-        elif blue > red and blue > green:
-            return "blue"
-        else:
-            return "unknown"
     
-    @staticmethod
-    def normalize_rgb(rgb: tuple[float]) -> tuple[float]:
+    def __normalize_rgb(rgb: tuple[float]) -> tuple[float]:
         total = sum(rgb)
         if total == 0:
             return (0.0, 0.0, 0.0)
         return (value / total for value in rgb)
     
-    def filter_data(r, g, b):
+    def __filter_data(r, g, b):
         if r is not None and g is not None and b is not None:
             if r > 0 and g > 0 and b > 0:
                 return True
         return False
 
-    
-    def is_color_detected(self, target_color: str, threshold: float = 0.1) -> bool:
-        rgb = self.get_rgb()
-        normalized_rgb = self.__normalize_rgb(rgb)
-        red, green, blue = normalized_rgb
+    def __handle_threshold(color):
+        return color
 
-        if target_color == "red":
-            return red > green + threshold and red > blue + threshold
-        elif target_color == "green":
-            return green > red + threshold and green > blue + threshold
-        elif target_color == "blue":
-            return blue > red + threshold and blue > green + threshold
-        else:
-            return False
+    def classify_color(self, r, g, b) -> str:
+        color_found = "UNKNOWN"
+        closest_dist = math.inf
+        for name, (rr, gg, bb) in ColorSensor.REFS.items():
+            dist = math.sqrt((r - rr) ** 2 + (g - gg) ** 2 + (b - bb) ** 2)
+            if dist < closest_dist:
+                closest_dist = dist
+                color_found = name
+        return color_found
+    
+    def get_color_detected(self):
+        rgb = self.get_rgb()
+        if not self.__filter_data:
+            return "UNKNOWN"
+
+        color_found = self.classify_color(*rgb)
+        color_found = self.__handle_threshold(color_found)
+        # extra things
+
+        
+        self.current_color = color_found
+        return color_found
