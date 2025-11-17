@@ -17,15 +17,12 @@ def main():
     wait_ready_sensors(True) # Input True to see what the robot is trying to initialize! False to be silent.
     print("Color Sensor is ready.")
     color_sensor = ColorSensor(COLOR_SENSOR)
-    try:
-        for color in ColorSensor.REFS.keys():
-            print("COLOR:", color)
-            collect_color_sensor_data(color, color_sensor)
-    except BaseException:  # capture all exceptions including KeyboardInterrupt (Ctrl-C)
-        pass
-    finally:
-        reset_brick()  # Turn off everything on the brick's hardware, and reset it
-        exit()
+    for color in ColorSensor.REFS.keys():
+        print("COLOR:", color)
+        collect_color_sensor_data(color, color_sensor)
+
+    reset_brick()  # Turn off everything on the brick's hardware, and reset it
+    exit()
 
 def collect_color_sensor_data(color: str, color_sensor: ColorSensor):
     print("-=-=-=-=- Collect color data for", color, "-=-=-=-=-")
