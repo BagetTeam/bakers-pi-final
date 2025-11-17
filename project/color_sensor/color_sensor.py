@@ -46,10 +46,12 @@ class ColorSensor:
     
     def get_color_detected(self):
         rgb = self.get_rgb()
+        print(rgb)
         if not self.__filter_data(*rgb):
             return "UNKNOWN"
-
+        print("HAS BEEN FILTERED")
         color_found = self.classify_color(*rgb)
+        print(color_found)
         color_found = self.__handle_threshold(color_found)
         # extra things
 
