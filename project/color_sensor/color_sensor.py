@@ -19,19 +19,19 @@ class ColorSensor:
         return self.sensor.get_rgb()
 
     
-    def __normalize_rgb(rgb: tuple[float]) -> tuple[float]:
+    def __normalize_rgb(self, rgb: tuple[float]) -> tuple[float]:
         total = sum(rgb)
         if total == 0:
             return (0.0, 0.0, 0.0)
         return (value / total for value in rgb)
     
-    def __filter_data(r, g, b):
+    def __filter_data(self, r, g, b):
         if r is not None and g is not None and b is not None:
             if r > 0 and g > 0 and b > 0:
                 return True
         return False
 
-    def __handle_threshold(color):
+    def __handle_threshold(self, color):
         return color
 
     def classify_color(self, r, g, b) -> str:
@@ -46,7 +46,7 @@ class ColorSensor:
     
     def get_color_detected(self):
         rgb = self.get_rgb()
-        if not self.__filter_data:
+        if not self.__filter_data(*rgb):
             return "UNKNOWN"
 
         color_found = self.classify_color(*rgb)
