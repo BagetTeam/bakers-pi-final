@@ -47,7 +47,9 @@ class ColorSensor:
             _ = self.__detect_color()
 
     def get_rgb(self) -> tuple[float, float, float]:
-        r, g, b = self.current_rgb
+        r, g, b = self.sensor.get_rgb()
+        self.sensor.wait_ready()
+        return r, g, b
     
     def __set_rgb_color(self, rgb, color):
         self.current_color = rgb
