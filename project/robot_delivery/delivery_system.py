@@ -28,7 +28,8 @@ class DeliverySystem:
         print("DELIVERING")
         color = self.sensor.get_current_color()
         print(color)
-
+        self.success_sound.play()
+        self.success_sound.wait_done()
 
         # if color == "GREEN":
         self.move_back()
