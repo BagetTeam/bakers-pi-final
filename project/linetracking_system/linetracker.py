@@ -60,7 +60,7 @@ class LineTracker(RobotMovement):
         while True:
             if self.color_sensor.get_current_color() != "BLACK" and self.color_sensor.get_current_color() != "WHITE":
                 continue
-            
+
             rgb = self.color_sensor.get_current_rgb()
             
             dist_to_black = self.color_sensor.get_distance(rgb, "BLACK")
@@ -83,9 +83,7 @@ class LineTracker(RobotMovement):
                 self.intersection_turn_right(power=base_power)
                 sleep(2)  # wait for the turn to complete
             else:
-                # on black/edge, turn right (away from the line)
-                # Proportional to how "black" it is.
-                # blackness increases as we get deeper into the line
+                # on black/edge, turn right proportionally to how black it is
                 turn_strength = blackness * alpha
                 self.adjust_speed(base_power + turn_strength, base_power)
             sleep(0.01)
