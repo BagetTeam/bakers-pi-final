@@ -2,12 +2,14 @@ from time import sleep
 from color_sensor.color_sensor import ColorSensor
 from robot_movement.robot_movement import RobotMovement
 from utils.brick import Motor, wait_ready_sensors
+from utils.sound import Sound
 
 
 class DeliverySystem:
     delivery_motor: Motor
     sensor: ColorSensor
     movement: RobotMovement
+    success_sound: Sound
 
     is_active: bool = True
     deg: int = 0
@@ -19,12 +21,14 @@ class DeliverySystem:
         self.delivery_motor = motor
         self.sensor = sensor
         self.movement = movement
+        self.success_sound = Sound(duration = 1, pitch = "C4", volume = 80)
         self.delivery_motor.reset_encoder()  # Ensure we start from position 0
 
     def deliver(self):
         print("DELIVERING")
         color = self.sensor.get_current_color()
         print(color)
+
 
         # if color == "GREEN":
         self.move_back()
