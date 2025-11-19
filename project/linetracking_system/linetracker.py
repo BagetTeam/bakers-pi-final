@@ -51,3 +51,40 @@ class LineTracker(RobotMovement):
                 self.adjust_speed(base_power + left_speed_adjust[0], base_power)
 
         
+    def follow_line3(self, base_power: int = 30, correction_factor: int = 10, alpha: float = 1.0, threshold: float = 0.3):
+        # run a loop to continuously adjust motor speeds based on sensor reading
+
+        white_ref, black_ref = self.color_sensor.cache["WHITE"], self.color_sensor.cache["BLACK"]
+        
+        def euclidean_distance(rgb1, rgb2):
+            return sum((a - b) ** 2 for a, b in zip(rgb1, rgb2)) ** 0.5
+
+        while True:
+            # Unpack the values: current rgb, white reference, black reference
+            # Note: get_rgb_detected returns (rgb, white, black)
+            # We use a throwaway variable for the refs since we cached them above, 
+            # or we could just use get_rgb() if available. 
+            rgb, _, _ = self.color_sensor.get_rgb_detected()
+            
+            dist_to_black = euclidean_distance(rgb, black_ref)
+            dist_to_white = euclidean_distance(rgb, white_ref)
+            
+            # Calculate Blackness Ratio (0.0 = White, 1.0 = Black)
+            total_dist = dist_to_white + dist_to_black
+            if total_dist == 0: 
+                total_dist = 0.001 # Analyze prevent division by zero
+                
+            blackness = dist_to_white / total_dist
+
+            # adjust motor speeds based on the normalized blackness ratio
+            if blackness < threshold:
+                # on white (ratio is low), slight left (turn towards the line)
+                # To turn left: Right motor > Left motor
+                self.adjust_speed(base_power, base_power + correction_factor)
+            else:
+                # on black/edge, turn right (away from the line)
+                # Proportional to how "black" it is.
+                # blackness increases as we get deeper into the line
+                turn_strength = blackness * alpha
+                self.adjust_speed(base_power + turn_strength, base_power)
+            
