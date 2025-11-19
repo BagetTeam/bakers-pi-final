@@ -1,60 +1,94 @@
-from utils.brick import EV3ColorSensor, wait_ready_sensors
+import math
+from threading import Thread
+from typing import Union
+from utils.brick import EV3ColorSensor
 
 
 class ColorSensor:
-    REFS = {
-        "RED": (255.0, 0.0, 0.0),
-        "GREEN": (0.0, 255.0, 0.0),
-        "BLUE": (0.0, 0.0, 255.0),
-        "YELLOW": (255.0, 255.0, 0.0),
-        "BLACK": (0.0, 0.0, 0.0),
-        "WHITE": (255.0, 255.0, 255.0),
-    }
-
-    # NORMALIZED_REFS = {key: ColorSensor.normalize_rgb(value) for key, value in REFS.items()}
+    sensor: EV3ColorSensor
+    current_color: str
+    cache: dict[str, tuple[float, float, float]] = {}
+    thread: Thread
+    thread_run: bool = True
 
     def __init__(self, sensor: EV3ColorSensor):
-        wait_ready_sensors()
         self.sensor = sensor
+        self.current_color = "UNKNOWN"
+        self.init_cache()
+
+        self.thread = Thread(target=self.main, args=[self])
+        self.thread.start()
+
+    def init_cache(self):
+        colors = ["red", "green", "blue", "yellow", "black", "white", "orange"]
+
+        for color in colors:
+            with open(f"data_analysis/color_data/{color}.txt") as file:
+                r_sum, g_sum, b_sum = 0, 0, 0
+
+                rows = file.readlines()
+                n = len(rows)
+                for row in rows:
+                    r, g, b = row.split(", ")
+                    r_sum += int(r)
+                    g_sum += int(g)
+                    b_sum += int(b)
+
+                self.cache[color.upper()] = self.__normalize_rgb(
+                    (r_sum / n, g_sum / n, g_sum / n)
+                )
+
+    def main(self):
+        while self.thread_run:
+            _ = self.get_color_detected()
 
     def get_rgb(self) -> list[float]:
         return self.sensor.get_rgb()
 
-    def classify_color(self) -> str:
-        rgb = self.get_rgb()
-        red, green, blue = rgb
-
-        if red > green and red > blue:
-            return "red"
-        elif green > red and green > blue:
-            return "green"
-        elif blue > red and blue > green:
-            return "blue"
-        else:
-            return "unknown"
-
-    def __normalize_rgb(self, rgb: list[float]) -> tuple[float, ...]:
+    def __normalize_rgb(
+        self, rgb: tuple[float, float, float]
+    ) -> tuple[float, float, float]:
         total = sum(rgb)
         if total == 0:
             return (0.0, 0.0, 0.0)
-        return tuple(value / total for value in rgb)
+        return rgb[0] / total, rgb[1] / total, rgb[2] / total
 
-    def filter_data(self, r: float, g: float, b: float):
+    def filter_data(
+        self, r: Union[float, None], g: Union[float, None], b: Union[float, None]
+    ):
         if r is not None and g is not None and b is not None:
             if r > 0 and g > 0 and b > 0:
                 return True
         return False
 
-    def is_color_detected(self, target_color: str, threshold: float = 0.1) -> bool:
-        rgb = self.get_rgb()
-        normalized_rgb = self.__normalize_rgb(rgb)
-        red, green, blue = normalized_rgb
+    def __handle_threshold(self, color: str):
+        return color
 
-        if target_color == "red":
-            return red > green + threshold and red > blue + threshold
-        elif target_color == "green":
-            return green > red + threshold and green > blue + threshold
-        elif target_color == "blue":
-            return blue > red + threshold and blue > green + threshold
-        else:
-            return False
+    def classify_color(self, rgb: tuple[float, float, float]) -> str:
+        r, g, b = self.__normalize_rgb(rgb)
+        color_found = "UNKNOWN"
+        closest_dist = math.inf
+        for name, (rr, gg, bb) in self.cache.items():
+            dist = math.sqrt((r - rr) ** 2 + (g - gg) ** 2 + (b - bb) ** 2)
+            if dist < closest_dist:
+                closest_dist = dist
+                color_found = name
+        return color_found
+
+    def get_color_detected(self):
+        r, g, b = self.get_rgb()
+        print(r, g, b)
+        if not self.filter_data(r, g, b):
+            return "UNKNOWN"
+        print("HAS BEEN FILTERED")
+        color_found = self.classify_color((r, g, b))
+        print(color_found)
+        color_found = self.__handle_threshold(color_found)
+        # extra things
+
+        self.current_color = color_found
+        return color_found
+
+    def dispose(self):
+        self.thread_run = False
+        self.thread.join()
