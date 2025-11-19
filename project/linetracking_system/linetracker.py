@@ -57,11 +57,6 @@ class LineTracker(RobotMovement):
     def follow_line3(self, base_power: int = 30, correction_factor: int = 10, alpha: float = 1.0, threshold: float = 0.3):
         # run a loop to continuously adjust motor speeds based on sensor reading
 
-        white_ref, black_ref = self.color_sensor.cache["WHITE"], self.color_sensor.cache["BLACK"]
-        
-        def euclidean_distance(rgb1, rgb2):
-            return sum((a - b) ** 2 for a, b in zip(rgb1, rgb2)) ** 0.5
-
         while True:
             # Unpack the values: current rgb, white reference, black reference
             # Note: get_rgb_detected returns (rgb, white, black)
@@ -69,8 +64,8 @@ class LineTracker(RobotMovement):
             # or we could just use get_rgb() if available. 
             rgb, _, _ = self.color_sensor.get_rgb()
             
-            dist_to_black = euclidean_distance(rgb, black_ref)
-            dist_to_white = euclidean_distance(rgb, white_ref)
+            dist_to_black = self.color_sensor.get_distance(rgb, "BLACK")
+            dist_to_white = self.color_sensor.get_distance(rgb, "WHITE")
             
             # Calculate Blackness Ratio (0.0 = White, 1.0 = Black)
             total_dist = dist_to_white + dist_to_black
