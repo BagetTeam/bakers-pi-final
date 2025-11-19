@@ -10,15 +10,11 @@ from utils.brick import (
 from robot_movement import robot_movement_test as robot_move_test
 from linetracking_system import linetracker, test_linetracker
 
-TOUCH1, COLOR, MOTOR1, MOTOR2 = configure_ports(
-    PORT_1=TouchSensor,
-    PORT_2=EV3ColorSensor,
-    PORT_A=Motor,
-    PORT_D=Motor,
-    wait=True,
-    print_status=True,
-)
-wait_ready_sensors()
+TOUCH1 = TouchSensor(1)
+COLOR = EV3ColorSensor(3)
+MOTOR1 = Motor("A")
+MOTOR2 = Motor("D")
+wait_ready_sensors(True)
 
 COLOR_SENSOR = ColorSensor(COLOR)
 
@@ -41,4 +37,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

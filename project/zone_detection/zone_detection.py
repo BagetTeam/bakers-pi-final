@@ -24,7 +24,9 @@ class ZoneDetection:
 
     def detect_zones(self):
         while True:
-            color = self.color_sensor.current_color
+            color = self.color_sensor.get_current_color()
+            sleep(0.1)
+            print(color)
             if color == "ORANGE":
                 self.movement.move_straight(-MOTOR_POWER)
                 sleep(0.5)
@@ -38,15 +40,17 @@ class ZoneDetection:
             elif color == "GREEN":
                 self.movement.stop_move()
                 sleep(0.3)
+                self.movement.change_relative_angle(90, -90)
+                sleep(1)
                 self.delivery.deliver()
-                sleep(0.3)
-                self.movement.change_relative_angle(-360, 360)
-                sleep(0.3)
+                self.movement.change_relative_angle(-90, 90)
+                sleep(1)
                 self.movement.move_straight(MOTOR_POWER)
+                exit(1)
 
             elif color == "RED":
                 self.movement.stop_move()
                 sleep(0.3)
-                self.movement.change_relative_angle(-360, 360)
-                sleep(0.3)
+                self.movement.change_relative_angle(-500, 500)
+                sleep(5)
                 self.movement.move_straight(MOTOR_POWER)

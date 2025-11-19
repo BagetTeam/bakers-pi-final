@@ -1,5 +1,6 @@
 import math
 from threading import Thread
+from time import sleep
 from typing import Union
 from utils.brick import EV3ColorSensor
 
@@ -19,7 +20,7 @@ class ColorSensor:
 
         self.thread = Thread(target=self.main, args=[])
         self.thread.start()
-        self.current_rgb: tuple[float, float, float]
+        self.current_rgb: tuple[float, float, float] = (0, 0, 0)
 
     def init_cache(self):
         colors = ["red", "green", "blue", "yellow", "black", "white", "orange"]
@@ -39,23 +40,23 @@ class ColorSensor:
                 self.cache[color.upper()] = self.__normalize_rgb(
                     (r_sum / n, g_sum / n, b_sum / n)
                 )
+                # (r_sum / n, g_sum / n, b_sum / n)
 
         print("cache initialized, ", self.cache)
 
     def main(self):
         while self.thread_run:
             _ = self.__detect_color()
+            sleep(0.1)
 
     def get_rgb(self) -> tuple[float, float, float]:
         r, g, b = self.sensor.get_rgb()
         self.sensor.wait_ready()
         return r, g, b
-    
+
     def __set_rgb_color(self, rgb, color):
         self.current_color = rgb
         self.current_color = color
-        self.sensor.wait_ready()
-        return r, g, b
 
     def __normalize_rgb(
         self, rgb: tuple[float, float, float]
@@ -75,21 +76,21 @@ class ColorSensor:
 
     def __handle_threshold(self, color: str):
         return color
-    
+
     def get_distance(self, rgb: tuple[float, float, float], target_color: str):
         if target_color not in self.cache:
             return -1
-        (rr, gg, bb) = self.cache.get(target_color)
+        (rr, gg, bb) = self.cache[target_color]
         r, g, b = rgb
         dist = math.sqrt((r - rr) ** 2 + (g - gg) ** 2 + (b - bb) ** 2)
         return dist
-    
+
     def classify_color(self, rgb: tuple[float, float, float]) -> str:
         r, g, b = self.__normalize_rgb(rgb)
         color_found = "UNKNOWN"
         closest_dist = math.inf
         for name in self.cache.keys():
-            dist = self.get_distance(rgb, name)
+            dist = self.get_distance((r, g, b), name)
             if dist < closest_dist:
                 closest_dist = dist
                 color_found = name
@@ -109,8 +110,8 @@ class ColorSensor:
 
     def get_current_color(self) -> str:
         return self.current_color
-    
-    def get_current_rgb(self) -> list[float]:
+
+    def get_current_rgb(self) -> tuple[float, float, float]:
         return self.current_rgb
 
     def dispose(self):

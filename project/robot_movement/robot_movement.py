@@ -13,7 +13,10 @@ class RobotMovement:
         self.right_motor = right_motor
 
         self.right_motor.reset_encoder()
+        self.right_motor.set_limits(50)
         self.left_motor.reset_encoder()
+        self.left_motor.set_limits(50)
+        sleep(1)
 
     def set_limits(self, power: int = 0, dps: int = 0):
         self.left_motor.set_limits(power, dps)

@@ -8,23 +8,21 @@ from utils.sound import Sound
 class DeliverySystem:
     delivery_motor: Motor
     sensor: ColorSensor
+    sound: Sound
 
     is_active: bool = True
     deg: int = 0
     has_first_been_pushed = False
 
     def __init__(
-        self,
-        motor: Motor,
-        sensor: ColorSensor,
-        right_motor: Motor,
+        self, motor: Motor, sensor: ColorSensor, right_motor: Motor, sound: Sound
     ):
         print("initializing delivery system")
 
         self.delivery_motor = motor
         self.right_motor = right_motor
         self.sensor = sensor
-        self.success_sound = Sound(duration=1, pitch="C4", volume=80)
+        self.sound = sound
 
         self.delivery_motor.reset_encoder()  # Ensure we start from position 0
 
@@ -32,8 +30,8 @@ class DeliverySystem:
         print("DELIVERING")
         color = self.sensor.get_current_color()
         print(color)
-        self.success_sound.play()
-        self.success_sound.wait_done()
+        self.sound.play()
+        self.sound.wait_done()
 
         # self.move_back()
         # self.push()
