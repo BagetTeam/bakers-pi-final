@@ -16,14 +16,14 @@ class ColorSensor:
         self.current_color = "UNKNOWN"
         self.init_cache()
 
-        self.thread = Thread(target=self.main, args=[self])
+        self.thread = Thread(target=self.main, args=[])
         self.thread.start()
 
     def init_cache(self):
         colors = ["red", "green", "blue", "yellow", "black", "white", "orange"]
 
         for color in colors:
-            with open(f"data_analysis/color_data/{color}.txt") as file:
+            with open(f"../data_analysis/color_data/{color}.txt") as file:
                 r_sum, g_sum, b_sum = 0, 0, 0
 
                 rows = file.readlines()
