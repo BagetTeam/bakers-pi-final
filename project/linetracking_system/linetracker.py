@@ -37,3 +37,18 @@ class LineTracker(RobotMovement):
                 self.adjust_speed(base_power, base_power + 5)
                 previous_color = 1
             sleep(0.01)
+
+    def follow_line2(self, base_power: int = 30):
+        left_speed_range = [5, 10, 15]
+        while True:
+            color = self.color_sensor.get_color_detected()
+            if color == "BLACK":
+                dist_black = self.color_sensor.get_distance(self.color_sensor.get_rgb(), "BLACK")
+                if dist_black < 0.1:
+                    self.intersection_turn_right()
+                adjusted_left_speed = left_speed_range[1]
+                self.adjust_speed(base_power + adjusted_left_speed, base_power)
+            elif color == "WHITE":
+                self.adjust_speed(base_power - 5, base_power)
+
+        

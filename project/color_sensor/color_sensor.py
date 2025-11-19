@@ -18,6 +18,7 @@ class ColorSensor:
 
         self.thread = Thread(target=self.main, args=[])
         self.thread.start()
+        self.current_rgb: tuple[float, float, float]
 
     def init_cache(self):
         colors = ["red", "green", "blue", "yellow", "black", "white", "orange"]
@@ -43,7 +44,11 @@ class ColorSensor:
             _ = self.get_color_detected()
 
     def get_rgb(self) -> list[float]:
-        return self.sensor.get_rgb()
+        return self.current_rgb
+    
+    def __set_rgb_color(self, rgb, color):
+        self.current_color = rgb
+        self.current_color = color
 
     def __normalize_rgb(
         self, rgb: tuple[float, float, float]
@@ -84,17 +89,15 @@ class ColorSensor:
         return color_found
 
     def get_color_detected(self):
-        r, g, b = self.get_rgb()
-        print(r, g, b)
-        if not self.filter_data(r, g, b):
+        rgb = self.sensor.get_rgb()
+        if not self.filter_data(*rgb):
+            self.__set_rgb_color(rgb, "UNKNOWN")
             return "UNKNOWN"
-        print("HAS BEEN FILTERED")
-        color_found = self.classify_color((r, g, b))
-        print(color_found)
+        color_found = self.classify_color(rgb)
         color_found = self.__handle_threshold(color_found)
         # extra things
 
-        self.current_color = color_found
+        self.__set_rgb_color(rgb, color_found)
         return color_found
 
     def dispose(self):
