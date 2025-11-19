@@ -12,6 +12,7 @@ class ColorSensor:
     thread_run: bool = True
 
     def __init__(self, sensor: EV3ColorSensor):
+        print("initializing color sensor")
         self.sensor = sensor
         self.current_color = "UNKNOWN"
         self.init_cache()
@@ -38,12 +39,17 @@ class ColorSensor:
                     (r_sum / n, g_sum / n, b_sum / n)
                 )
 
+        print("cache initialized, ", self.cache)
+
     def main(self):
         while self.thread_run:
-            _ = self.get_color_detected()
+            _color = self.detect_color()
+            # print(color)
 
-    def get_rgb(self) -> list[float]:
-        return self.sensor.get_rgb()
+    def get_rgb(self) -> tuple[float, float, float]:
+        r, g, b = self.sensor.get_rgb()
+        self.sensor.wait_ready()
+        return r, g, b
 
     def __normalize_rgb(
         self, rgb: tuple[float, float, float]
@@ -83,20 +89,24 @@ class ColorSensor:
                 color_found = name
         return color_found
 
-    def get_color_detected(self):
+    def detect_color(self):
         r, g, b = self.get_rgb()
-        print(r, g, b)
+        # print(r, g, b)
         if not self.filter_data(r, g, b):
             return "UNKNOWN"
-        print("HAS BEEN FILTERED")
+        # print("HAS BEEN FILTERED")
         color_found = self.classify_color((r, g, b))
-        print(color_found)
+        # print(color_found)
         color_found = self.__handle_threshold(color_found)
         # extra things
 
         self.current_color = color_found
         return color_found
 
+    def get_current_color(self):
+        return self.current_color
+
     def dispose(self):
+        print("disposing color sensor")
         self.thread_run = False
         self.thread.join()

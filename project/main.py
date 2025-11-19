@@ -22,6 +22,7 @@ wait_ready_sensors()
 
 COLOR_SENSOR = ColorSensor(COLOR)
 
+
 def main():
     # movement_test = robot_move_test.MovementTest(TOUCH1, TOUCH2, MOTOR1, MOTOR2)
     line_tracker = linetracker.LineTracker(MOTOR1, MOTOR2, COLOR_SENSOR)
@@ -37,5 +38,7 @@ def main():
         reset_brick()  # Turn off everything on the brick's hardware, and reset it
         exit()
 
+
 if __name__ == "__main__":
     main()
+
