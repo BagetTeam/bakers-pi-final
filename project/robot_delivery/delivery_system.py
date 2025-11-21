@@ -1,7 +1,6 @@
 from time import sleep
 from color_sensor.color_sensor import ColorSensor
-from robot_movement.robot_movement import RobotMovement
-from utils.brick import Motor, wait_ready_sensors
+from utils.brick import Motor
 from utils.sound import Sound
 
 

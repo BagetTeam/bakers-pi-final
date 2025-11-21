@@ -26,6 +26,7 @@ class PackageDiscovery:
     def explore_room(self):
         BASE_L = 20
         BASE_R = 20
+        advance_time = 0.5
 
         package_found = False
         advances = 0
@@ -71,20 +72,20 @@ class PackageDiscovery:
 
             # Advance
             self.robot_movement.adjust_speed(BASE_L, BASE_R)
-            sleep(0.35)
+            sleep(advance_time)
             self.robot_movement.adjust_speed(0, 0)
 
         self.robot_movement.adjust_speed(-BASE_L, -BASE_R)
-        sleep(0.35 * advances)
+        sleep(advance_time * advances)
         self.robot_movement.adjust_speed(0, 0)
 
     def delivery_package(self):
         self.robot_movement.adjust_speed(-10, -10)
         sleep(0.2)
         self.robot_movement.adjust_speed(0, 0)
-        sleep(0.2)
+        sleep(1)
         self.delivery_system.deliver()
-        sleep(0.2)
+        sleep(1)
         self.robot_movement.adjust_speed(10, 10)
         sleep(0.2)
         self.robot_movement.adjust_speed(0, 0)
