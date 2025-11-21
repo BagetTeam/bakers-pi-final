@@ -1,6 +1,7 @@
 from time import sleep
 from color_sensor.color_sensor import ColorSensor
 from gyro_sensor.gyro_sensor import GyroSensor
+from robot_delivery.delivery_system import DeliverySystem
 from robot_movement.robot_movement import RobotMovement
 
 
@@ -8,16 +9,19 @@ class PackageDiscovery:
     color_sensor: ColorSensor
     robot_movement: RobotMovement
     gyro_sensor: GyroSensor
+    delivery_system: DeliverySystem
 
     def __init__(
         self,
         gyro_sensor: GyroSensor,
         color_sensor: ColorSensor,
         robot_movement: RobotMovement,
+        delivery_system: DeliverySystem
     ):
         self.color_sensor = color_sensor
         self.robot_movement = robot_movement
         self.gyro_sensor = gyro_sensor
+        self.delivery_system = delivery_system
 
     def explore_room(self):
         BASE_L = 20
@@ -37,6 +41,7 @@ class PackageDiscovery:
                 if self.color_sensor.get_current_color() == "GREEN":
                     package_found = True
                     print("PACKAGE FOUUND")
+                    self.delivery_system.deliver()
                     break
                 sleep(0.01)
             sleep(0.5)
@@ -67,3 +72,8 @@ class PackageDiscovery:
             self.robot_movement.adjust_speed(BASE_L, BASE_R)
             sleep(0.7)
             self.robot_movement.adjust_speed(0, 0)
+
+    def delivery_package(self):
+        self.robot_movement.adjust_speed(-10, -10)
+        sleep(0.2)
+        self.delivery_system.deliver()

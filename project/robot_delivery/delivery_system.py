@@ -29,9 +29,6 @@ class DeliverySystem:
 
     def deliver(self):
         print("DELIVERING")
-        color = self.sensor.get_current_color()
-        print(color)
-
         self.push()
 
         self.sound.play()
