@@ -40,10 +40,10 @@ class ZoneDetection:
             elif color == "GREEN":
                 self.movement.stop_move()
                 sleep(0.3)
-                self.movement.change_relative_angle(90, -90)
+                self.movement.change_relative_angle(45, -90)
                 sleep(1)
                 self.delivery.deliver()
-                self.movement.change_relative_angle(-90, 90)
+                self.movement.change_relative_angle(-45, 90)
                 sleep(1)
                 self.movement.move_straight(MOTOR_POWER)
 
