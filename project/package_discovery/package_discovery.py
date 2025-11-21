@@ -16,7 +16,7 @@ class PackageDiscovery:
         gyro_sensor: GyroSensor,
         color_sensor: ColorSensor,
         robot_movement: RobotMovement,
-        delivery_system: DeliverySystem
+        delivery_system: DeliverySystem,
     ):
         self.color_sensor = color_sensor
         self.robot_movement = robot_movement
@@ -38,7 +38,7 @@ class PackageDiscovery:
             # Check left
             print("Checking LEFT")
             self.robot_movement.adjust_speed(0, BASE_R)
-            while self.gyro_sensor.get_angle() > -70:
+            while self.gyro_sensor.get_angle() > -50:
                 if self.color_sensor.get_current_color() == "GREEN":
                     package_found = True
                     print("PACKAGE FOUUND")
@@ -57,7 +57,7 @@ class PackageDiscovery:
             print("Checking RIGHT")
             # Check right
             self.robot_movement.adjust_speed(BASE_L, 0)
-            while self.gyro_sensor.get_angle() < 70:
+            while self.gyro_sensor.get_angle() < 50:
                 if self.color_sensor.get_current_color() == "GREEN":
                     package_found = True
                     print("PACKAGE FOUUND")
@@ -80,14 +80,16 @@ class PackageDiscovery:
         self.robot_movement.adjust_speed(0, 0)
 
     def delivery_package(self):
-        self.robot_movement.adjust_speed(-10, -10)
+        self.robot_movement.adjust_speed(0, 0)
         sleep(0.2)
+        self.robot_movement.adjust_speed(-10, -10)
+        sleep(0.3)
         self.robot_movement.adjust_speed(0, 0)
         sleep(1)
         self.delivery_system.deliver()
         sleep(1)
         self.robot_movement.adjust_speed(10, 10)
-        sleep(0.2)
+        sleep(0.3)
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.2)
-        
+

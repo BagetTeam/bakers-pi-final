@@ -17,6 +17,9 @@ class ZoneDetection:
     has_found_red: bool = False
     stop: bool = False
     package_discorvery: PackageDiscovery
+    t: Thread
+    run_thread: bool = True
+    is_discovering: bool = False
 
     def __init__(
         self,
@@ -30,14 +33,18 @@ class ZoneDetection:
         self.movement = movement
         self.package_discorvery = package_discovery
 
-    def detect_zone(self):
-        color = self.color_sensor.get_current_color()
+        self.t = Thread(target=self.detect_zone)
+        self.t.start()
 
-        if color == "ORANGE":
-            print("ORANGE")
+    def detect_zone(self):
+        if self.enabled:
             self.discover_color()
+            self.enabled = False
 
     def discover_color(self):
+        print("discovering")
+        self.is_discovering = True
+
         self.has_found_red = False
         self.stop = False
         t = Thread(target=self.__move_around)
@@ -57,10 +64,13 @@ class ZoneDetection:
         if not self.has_found_red:
             self.package_discorvery.explore_room()
 
+        self.__backtrack()
+        self.is_discovering = False
+
     def __backtrack(self):
         self.movement.set_limits(20)
         sleep(0.5)
-        self.movement.change_relative_angle(-50, -50)
+        self.movement.change_relative_angle(-40, -50)
         sleep(0.5)
         self.movement.set_limits(0)
         sleep(0.5)
@@ -72,11 +82,10 @@ class ZoneDetection:
         sleep(0.5)
         self.movement.change_relative_angle(0, 90)
         sleep(1)
-        self.movement.change_relative_angle(90, 0)
+        self.movement.change_relative_angle(70, 0)
         sleep(1)
 
         if self.has_found_red:
-            self.__backtrack()
             return
 
         self.movement.turn_with_angle(-30)
@@ -84,13 +93,14 @@ class ZoneDetection:
 
         if self.has_found_red:
             self.movement.turn_with_angle(30)
-            self.__backtrack()
             return
 
         self.movement.turn_with_angle(60)
         self.movement.turn_with_angle(-30)
 
-        if self.has_found_red:
-            self.__backtrack()
-
         self.stop = True
+
+    def dispose(self):
+        print("disposing zone detection")
+        self.run_thread = False
+        self.t.join()

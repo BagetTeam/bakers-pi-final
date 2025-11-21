@@ -69,6 +69,7 @@ def main(test: str):
     finally:
         print("Done testing")
         COLOR_SENSOR.dispose()
+        ZONE_DETECTION.dispose()
         reset_brick()  # Turn off everything on the brick's hardware, and reset it
         exit()
 

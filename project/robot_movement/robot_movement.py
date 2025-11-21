@@ -53,7 +53,7 @@ class RobotMovement:
     def turn_with_angle(self, angle: float, base_speed: int = 10):
         isRight = 1 if angle > 0 else -1
         self.gyro_sensor.set_reference()
-        self.adjust_speed(isRight * base_speed, -isRight * base_speed)
+        self.adjust_speed(isRight * base_speed * 0.9, -isRight * base_speed)
 
         while abs(self.gyro_sensor.get_angle()) < abs(angle):
             sleep(0.01)
@@ -62,11 +62,11 @@ class RobotMovement:
     def adjust_left_speed(self, left_power: float):
         self.left_motor.set_power(left_power)
 
-    def adjust_speed(self, left_power: int, right_power: int):
+    def adjust_speed(self, left_power: float, right_power: float):
         self.left_motor.set_power(left_power)
         self.right_motor.set_power(right_power)
 
-    def change_relative_angle(self, angleLeft: int, angleRight: int):
+    def change_relative_angle(self, angleLeft: float, angleRight: float):
         if angleLeft != 0:
             self.left_motor.set_position_relative(angleLeft)
         if angleRight != 0:
