@@ -1,4 +1,5 @@
 from time import sleep
+from gyro_sensor.gyro_sensor import GyroSensor
 from utils.brick import (
     Motor,
 )
@@ -7,10 +8,15 @@ from utils.brick import (
 class RobotMovement:
     left_motor: Motor
     right_motor: Motor
+    gyro_sensor: GyroSensor
 
-    def __init__(self, left_motor: Motor, right_motor: Motor):
+    BASE_R_POWER: int = 20
+    BASE_L_POWER: int = 10
+
+    def __init__(self, left_motor: Motor, right_motor: Motor, gyro_sensor: GyroSensor):
         self.left_motor = left_motor
         self.right_motor = right_motor
+        self.gyro_sensor = gyro_sensor
 
         self.right_motor.reset_encoder()
         self.right_motor.set_limits(50)
@@ -29,6 +35,19 @@ class RobotMovement:
     def stop_move(self):
         self.left_motor.set_power(0)
         self.right_motor.set_power(0)
+
+    def turn_right_90(self):
+        self.adjust_speed(30, -5)
+        while self.gyro_sensor.get_angle() < 90:
+            sleep(0.01)
+        self.adjust_speed(self.BASE_L_POWER, self.BASE_R_POWER)
+
+    def turn_left_90(self):
+        self.adjust_speed(-5, 30)
+        while self.gyro_sensor.get_angle() > -90:
+            sleep(0.01)
+        self.adjust_speed(self.BASE_L_POWER, self.BASE_R_POWER)
+
 
     def intersection_turn_right(self, power: int):
         self.left_motor.set_power(power)
