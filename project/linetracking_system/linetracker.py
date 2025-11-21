@@ -37,7 +37,7 @@ class LineTracker:
             rgb = self.color_sensor.get_current_rgb()
             color = self.color_sensor.get_current_color()
 
-            if color == "ORANGE" or color == "RED":
+            if color == "ORANGE":
                 self.zone_detection.detect_zone()
 
             ratio = self.get_ratio(rgb)
