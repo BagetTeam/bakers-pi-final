@@ -1,4 +1,5 @@
 from color_sensor.color_sensor import ColorSensor
+from gyro_sensor.gyro_sensor import GyroSensor
 from robot_delivery.delivery_system import DeliverySystem
 from robot_movement.robot_movement import RobotMovement
 from utils.brick import (
@@ -23,10 +24,10 @@ MOTOR_RIGHT = Motor("D")
 MOTOR_DELIVERY = Motor("C")
 wait_ready_sensors(True)
 
-GYRO.set_mode("abs")
-
 COLOR_SENSOR = ColorSensor(COLOR)
+GYRO_SENSOR = GyroSensor(GYRO)
 ROBOT_MOVEMENT = RobotMovement(MOTOR_LEFT, MOTOR_RIGHT)
+
 line_tracker = linetracker.LineTracker(ROBOT_MOVEMENT, COLOR_SENSOR, GYRO)
 line_tracker_test = test_linetracker.LineTrackingTest(line_tracker)
 

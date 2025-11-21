@@ -10,4 +10,8 @@ class PackageDiscovery:
         self.robot_movement = robot_movement
 
     def explore_room(self):
-        pass
+        BASE_L = 10
+        BASE_R = 10
+
+        self.robot_movement.adjust_speed(BASE_L, BASE_R)
+        
