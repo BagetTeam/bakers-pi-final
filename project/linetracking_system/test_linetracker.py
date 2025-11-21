@@ -1,4 +1,6 @@
+from color_sensor.color_sensor import ColorSensor
 from linetracking_system.linetracker import LineTracker
+from robot_movement.robot_movement import RobotMovement
 
 
 class LineTrackingTest:

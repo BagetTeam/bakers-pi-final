@@ -5,21 +5,21 @@ from color_sensor.color_sensor import ColorSensor
 from time import sleep
 
 
-class LineTracker(RobotMovement):
+class LineTracker:
     color_sensor: ColorSensor
+    robot_movement: RobotMovement
     gyro: EV3GyroSensor
     isLeft: bool
     zone_detection: ZoneDetection
 
     def __init__(
         self,
-        left_motor: Motor,
-        right_motor: Motor,
+        robot_movement: RobotMovement,
         color_sensor: ColorSensor,
         gyro: EV3GyroSensor,
         zone_detection: ZoneDetection,
     ):
-        super().__init__(left_motor, right_motor)
+        self.robot_movement = robot_movement
         self.color_sensor = color_sensor
         self.isLeft = False
         self.gyro = gyro
@@ -58,15 +58,17 @@ class LineTracker(RobotMovement):
             if blackness < threshold:
                 # on white (ratio is low), slight left (turn towards the line)
                 # To turn left: Right motor > Left motor
-                self.adjust_speed(base_power, base_power + correction_factor)
+                self.robot_movement.adjust_speed(
+                    base_power, base_power + correction_factor
+                )
             if blackness >= threshold_black:
                 # a line is being crossed, we should turn 90 deg
-                self.intersection_turn_right(power=base_power)
+                self.robot_movement.intersection_turn_right(power=base_power)
                 sleep(2)  # wait for the turn to complete
             else:
                 # on black/edge, turn right proportionally to how black it is
                 turn_strength = blackness * alpha
-                self.adjust_speed(base_power + turn_strength, base_power)
+                self.robot_movement.adjust_speed(base_power + turn_strength, base_power)
 
             sleep(0.01)
 
@@ -74,8 +76,7 @@ class LineTracker(RobotMovement):
         R_POWER = 20
         L_POWER = 10
 
-        self.right_motor.set_power(R_POWER)
-        self.left_motor.set_power(L_POWER)
+        self.robot_movement.adjust_speed(L_POWER, R_POWER)
 
         while True:
             rgb = self.color_sensor.get_current_rgb()
@@ -83,7 +84,9 @@ class LineTracker(RobotMovement):
             ratio = self.get_ratio(rgb)
             print(ratio)
 
-            self.left_motor.set_power(L_POWER + (L_POWER / 2) * ratio / 0.20)
+            self.robot_movement.adjust_left_speed(
+                L_POWER + (L_POWER / 2) * ratio / 0.20
+            )
 
             if ratio > 0.8:
                 self.turn_right()

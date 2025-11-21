@@ -1,8 +1,10 @@
 from utils.brick import EV3GyroSensor, wait_ready_sensors
 
 class GyroSensor:
+    sensor: EV3GyroSensor
+    reference: float
+
     def __init__(self, sensor: EV3GyroSensor):
-        wait_ready_sensors()
         self.sensor = sensor
         self.sensor.set_mode("abs")
         self.reference = 0.0
