@@ -10,21 +10,26 @@ from utils.brick import (
     wait_ready_sensors,
 )
 from linetracking_system import linetracker, test_linetracker
+import sys
+
+from zone_detection.zone_detection import ZoneDetection
 
 TOUCH1 = TouchSensor(1)
-TOUCH2 = TouchSensor(2)
+# TOUCH2 = TouchSensor(2)
 COLOR = EV3ColorSensor(3)
 GYRO = EV3GyroSensor(4)
-MOTOR1 = Motor("A")
-MOTOR2 = Motor("D")
+MOTOR_LEFT = Motor("A")
+MOTOR_RIGHT = Motor("D")
+MOTOR_DELIVERY = Motor("C")
 wait_ready_sensors(True)
 
 COLOR_SENSOR = ColorSensor(COLOR)
-line_tracker = linetracker.LineTracker(MOTOR1, MOTOR2, COLOR_SENSOR, GYRO)
+ROBOT_MOVEMENT = RobotMovement(MOTOR_LEFT, MOTOR_RIGHT)
+line_tracker = linetracker.LineTracker(ROBOT_MOVEMENT, COLOR_SENSOR, GYRO)
 line_tracker_test = test_linetracker.LineTrackingTest(line_tracker)
 
 
-def main():
+def main(test: str):
     # movement_test = robot_move_test.MovementTest(TOUCH1, TOUCH2, MOTOR1, MOTOR2)
     try:
         if test == "line":
@@ -36,8 +41,9 @@ def main():
             zone_detection.detect_zones()
             # delivery_system.deliver()
         elif test == "mvt":   
-            movement_test = robot_move_test.MovementTest(TOUCH1, TOUCH2, MOTOR_LEFT, MOTOR_RIGHT)
-            movement_test.corner_turning_test(TURNING_POWER=25)
+            # movement_test = robot_move_test.MovementTest(TOUCH1, TOUCH2, MOTOR_LEFT, MOTOR_RIGHT)
+            # movement_test.corner_turning_test(TURNING_POWER=25)
+            pass
         else:
             print("what the helly is ts test")
     except BaseException:
