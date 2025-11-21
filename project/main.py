@@ -34,8 +34,10 @@ GYRO_SENSOR = GyroSensor(GYRO)
 
 DELIVERY_SYSTEM = DeliverySystem(MOTOR_DELIVERY, COLOR_SENSOR, MOTOR_RIGHT, SOUND)
 ROBOT_MOVEMENT = RobotMovement(MOTOR_LEFT, MOTOR_RIGHT, GYRO_SENSOR)
-ZONE_DETECTION = ZoneDetection(COLOR_SENSOR, DELIVERY_SYSTEM, ROBOT_MOVEMENT)
 DISCOVERY_SYSTEM = PackageDiscovery(GYRO_SENSOR, COLOR_SENSOR, ROBOT_MOVEMENT)
+ZONE_DETECTION = ZoneDetection(
+    COLOR_SENSOR, DELIVERY_SYSTEM, ROBOT_MOVEMENT, DISCOVERY_SYSTEM
+)
 LINE_TRACKER = linetracker.LineTracker(
     ROBOT_MOVEMENT, COLOR_SENSOR, GYRO, ZONE_DETECTION
 )
@@ -48,13 +50,7 @@ def main(test: str):
             line_tracker_test = test_linetracker.LineTrackingTest(LINE_TRACKER)
             line_tracker_test.test(10, 10)
         elif test == "delivery":
-            delivery_system = DeliverySystem(
-                MOTOR_DELIVERY, COLOR_SENSOR, MOTOR_RIGHT, SOUND
-            )
-            zone_detection = ZoneDetection(
-                COLOR_SENSOR, delivery_system, ROBOT_MOVEMENT
-            )
-            zone_detection.detect_zones()
+            ZONE_DETECTION.detect_zone()
             # delivery_system.deliver()
         elif test == "mvt":
             # movement_test = robot_move_test.MovementTest(TOUCH1, TOUCH2, MOTOR_LEFT, MOTOR_RIGHT)

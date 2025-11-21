@@ -11,6 +11,7 @@ class LineTracker:
     gyro: EV3GyroSensor
     isLeft: bool
     zone_detection: ZoneDetection
+    turn_count: int = 0
 
     def __init__(
         self,
@@ -88,8 +89,11 @@ class LineTracker:
             )
 
             if ratio > 0.8:
-                self.turn_right()
-                self.robot_movement.adjust_speed(L_POWER, R_POWER)
+                self.turn_count += 1
+
+                if self.turn_count % 4 != 3:
+                    self.turn_right()
+                    self.robot_movement.adjust_speed(L_POWER, R_POWER)
 
             sleep(0.01)
 
