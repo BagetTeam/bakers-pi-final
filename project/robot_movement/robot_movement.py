@@ -50,10 +50,10 @@ class RobotMovement:
             sleep(0.01)
         self.adjust_speed(0, 0)
 
-    def turn_with_angle(self, angle: float):
+    def turn_with_angle(self, angle: float, base_speed: int = 10):
         isRight = 1 if angle > 0 else -1
         self.gyro_sensor.set_reference()
-        self.adjust_speed(isRight * 10, -isRight * 10)
+        self.adjust_speed(isRight * base_speed, -isRight * base_speed)
 
         while abs(self.gyro_sensor.get_angle()) < abs(angle):
             sleep(0.01)
