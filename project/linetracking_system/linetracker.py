@@ -1,3 +1,4 @@
+from zone_detection.zone_detection import ZoneDetection
 from utils.brick import EV3GyroSensor, Motor
 from robot_movement.robot_movement import RobotMovement
 from color_sensor.color_sensor import ColorSensor
@@ -8,6 +9,7 @@ class LineTracker(RobotMovement):
     color_sensor: ColorSensor
     gyro: EV3GyroSensor
     isLeft: bool
+    zone_detection: ZoneDetection
 
     def __init__(
         self,
@@ -15,11 +17,13 @@ class LineTracker(RobotMovement):
         right_motor: Motor,
         color_sensor: ColorSensor,
         gyro: EV3GyroSensor,
+        zone_detection: ZoneDetection,
     ):
         super().__init__(left_motor, right_motor)
         self.color_sensor = color_sensor
         self.isLeft = False
         self.gyro = gyro
+        self.zone_detection = zone_detection
 
     def follow_line3(
         self,
@@ -111,8 +115,7 @@ class LineTracker(RobotMovement):
             delta = abs(self.gyro.get_abs_measure() - current_angle)
             sleep(0.01)
 
-        if self.color_sensor.get_current_color() == "ORANGE":
-            pass
+        self.zone_detection.detect_zone()
 
         self.right_motor.set_power(20)
         self.left_motor.set_power(10)
