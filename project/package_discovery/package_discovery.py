@@ -10,8 +10,13 @@ class PackageDiscovery:
         self.robot_movement = robot_movement
 
     def explore_room(self):
-        BASE_L = 10
-        BASE_R = 10
+        BASE_L = 20
+        BASE_R = 20
 
-        self.robot_movement.adjust_speed(BASE_L, BASE_R)
-        
+        for advances in range(5):
+            self.robot_movement.adjust_speed(0, BASE_R)
+
+            self.robot_movement.adjust_speed(BASE_L, 0)
+
+            
+
