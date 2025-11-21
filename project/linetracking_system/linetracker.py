@@ -90,9 +90,14 @@ class LineTracker:
 
             if ratio > 0.8:
                 self.turn_count += 1
+                print(self.turn_count)
 
                 if self.turn_count % 4 != 3:
                     self.turn_right()
+                    self.robot_movement.adjust_speed(L_POWER, R_POWER)
+                else:
+                    self.robot_movement.adjust_speed(R_POWER, R_POWER)
+                    sleep(1)
                     self.robot_movement.adjust_speed(L_POWER, R_POWER)
 
             sleep(0.01)

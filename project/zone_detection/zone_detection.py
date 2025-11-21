@@ -83,12 +83,12 @@ class ZoneDetection:
         sleep(0.5)
 
         if self.has_found_red:
-            self.movement.turn_with_angle(-self.movement.gyro_sensor.get_angle())
+            self.movement.turn_with_angle(30)
             self.__backtrack()
             return
 
         self.movement.turn_with_angle(60)
-        self.movement.turn_with_angle(-self.movement.gyro_sensor.get_angle())
+        self.movement.turn_with_angle(-30)
 
         if self.has_found_red:
             self.__backtrack()
