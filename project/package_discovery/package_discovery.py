@@ -38,6 +38,7 @@ class PackageDiscovery:
                     package_found = True
                     print("PACKAGE FOUUND")
                     break
+                sleep(0.01)
             sleep(0.5)
             print("Turning back LEFT")
             self.robot_movement.adjust_speed(0, -BASE_R)
@@ -55,6 +56,7 @@ class PackageDiscovery:
                     package_found = True
                     print("PACKAGE FOUUND")
                     break
+                sleep(0.01)
             sleep(0.5)
             print("Turning back RIGHT")
             self.robot_movement.adjust_speed(-BASE_L, 0)
