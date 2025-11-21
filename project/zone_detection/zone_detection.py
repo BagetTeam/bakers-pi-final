@@ -47,15 +47,21 @@ class ZoneDetection:
         t.join()
 
     def __backtrack(self):
+        self.movement.set_limits(20)
         sleep(0.5)
+        self.movement.change_relative_angle(-50, -50)
+        sleep(1)
+        self.movement.set_limits(0)
+        sleep(1)
+
         self.movement.turn_with_angle(-180, 30)
 
     def __move_around(self):
         self.movement.set_limits(20)
         sleep(0.5)
-        self.movement.change_relative_angle(0, 50)
+        self.movement.change_relative_angle(0, 90)
         sleep(1)
-        self.movement.change_relative_angle(50, 0)
+        self.movement.change_relative_angle(90, 0)
         sleep(1)
 
         if self.has_found_red:
