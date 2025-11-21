@@ -1,4 +1,6 @@
 from color_sensor.color_sensor import ColorSensor
+from gyro_sensor.gyro_sensor import GyroSensor
+from utils.sound import Sound
 from robot_delivery.delivery_system import DeliverySystem
 from robot_movement.robot_movement import RobotMovement
 from utils.brick import (
@@ -21,13 +23,19 @@ GYRO = EV3GyroSensor(4)
 MOTOR_LEFT = Motor("A")
 MOTOR_RIGHT = Motor("D")
 MOTOR_DELIVERY = Motor("C")
+SOUND = Sound(1, 100, "C4")
 wait_ready_sensors(True)
 
-GYRO.set_mode("abs")
 
 COLOR_SENSOR = ColorSensor(COLOR)
-ROBOT_MOVEMENT = RobotMovement(MOTOR_LEFT, MOTOR_RIGHT)
-line_tracker = linetracker.LineTracker(ROBOT_MOVEMENT, COLOR_SENSOR, GYRO)
+GYRO_SENSOR = GyroSensor(GYRO)
+
+DELIVERY_SYSTEM = DeliverySystem(MOTOR_DELIVERY, COLOR_SENSOR, MOTOR_RIGHT, SOUND)
+ROBOT_MOVEMENT = RobotMovement(MOTOR_LEFT, MOTOR_RIGHT, GYRO_SENSOR)
+ZONE_DETECTION = ZoneDetection(COLOR_SENSOR, DELIVERY_SYSTEM, ROBOT_MOVEMENT)
+line_tracker = linetracker.LineTracker(
+    ROBOT_MOVEMENT, COLOR_SENSOR, GYRO, ZONE_DETECTION
+)
 line_tracker_test = test_linetracker.LineTrackingTest(line_tracker)
 
 
@@ -35,14 +43,18 @@ def main(test: str):
     # movement_test = robot_move_test.MovementTest(TOUCH1, TOUCH2, MOTOR1, MOTOR2)
     try:
         if test == "line":
-            line_tracker_test = test_linetracker.LineTrackingTest(ROBOT_MOVEMENT, COLOR_SENSOR)
+            line_tracker_test = test_linetracker.LineTrackingTest(line_tracker)
             line_tracker_test.test(10, 10)
         elif test == "delivery":
-            delivery_system = DeliverySystem(MOTOR_DELIVERY, COLOR_SENSOR, MOTOR_RIGHT, SOUND)
-            zone_detection = ZoneDetection(COLOR_SENSOR, delivery_system, ROBOT_MOVEMENT)
+            delivery_system = DeliverySystem(
+                MOTOR_DELIVERY, COLOR_SENSOR, MOTOR_RIGHT, SOUND
+            )
+            zone_detection = ZoneDetection(
+                COLOR_SENSOR, delivery_system, ROBOT_MOVEMENT
+            )
             zone_detection.detect_zones()
             # delivery_system.deliver()
-        elif test == "mvt":   
+        elif test == "mvt":
             # movement_test = robot_move_test.MovementTest(TOUCH1, TOUCH2, MOTOR_LEFT, MOTOR_RIGHT)
             # movement_test.corner_turning_test(TURNING_POWER=25)
             pass

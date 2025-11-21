@@ -107,5 +107,6 @@ class LineTracker:
         return diff / dist_diff
 
     def turn_right(self):
+        print("turning right")
         self.robot_movement.intersection_turn_right()
         self.zone_detection.detect_zone()
