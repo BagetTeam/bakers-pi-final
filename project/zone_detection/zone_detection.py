@@ -61,9 +61,9 @@ class ZoneDetection:
         self.movement.set_limits(20)
         sleep(0.5)
         self.movement.change_relative_angle(-50, -50)
-        sleep(1)
+        sleep(0.5)
         self.movement.set_limits(0)
-        sleep(1)
+        sleep(0.5)
 
         self.movement.turn_with_angle(-180, 30)
 

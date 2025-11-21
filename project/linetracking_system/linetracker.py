@@ -12,6 +12,7 @@ class LineTracker:
     isLeft: bool
     zone_detection: ZoneDetection
     turn_count: int = 0
+    orqnge_count: int = 0
 
     def __init__(
         self,
@@ -81,6 +82,10 @@ class LineTracker:
 
         while True:
             rgb = self.color_sensor.get_current_rgb()
+            color = self.color_sensor.get_current_color()
+
+            if color == "ORANGE":
+                self.orqnge_count += 1
 
             ratio = self.get_ratio(rgb)
 
@@ -94,6 +99,8 @@ class LineTracker:
 
                 if self.turn_count % 4 != 3:
                     self.turn_right()
+                    self.robot_movement.adjust_speed(0, 0)
+                    sleep(0.1)
                     self.robot_movement.adjust_speed(L_POWER, R_POWER)
                 else:
                     self.robot_movement.adjust_speed(R_POWER, R_POWER)
