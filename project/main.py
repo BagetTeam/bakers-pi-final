@@ -1,5 +1,7 @@
 from color_sensor.color_sensor import ColorSensor
 from gyro_sensor.gyro_sensor import GyroSensor
+from package_discovery.package_discovery import PackageDiscovery
+from package_discovery.test_package_discovery import PackageDiscoveryTest
 from utils.sound import Sound
 from robot_delivery.delivery_system import DeliverySystem
 from robot_movement.robot_movement import RobotMovement
@@ -33,17 +35,17 @@ GYRO_SENSOR = GyroSensor(GYRO)
 DELIVERY_SYSTEM = DeliverySystem(MOTOR_DELIVERY, COLOR_SENSOR, MOTOR_RIGHT, SOUND)
 ROBOT_MOVEMENT = RobotMovement(MOTOR_LEFT, MOTOR_RIGHT, GYRO_SENSOR)
 ZONE_DETECTION = ZoneDetection(COLOR_SENSOR, DELIVERY_SYSTEM, ROBOT_MOVEMENT)
-line_tracker = linetracker.LineTracker(
+DISCOVERY_SYSTEM = PackageDiscovery(GYRO_SENSOR, COLOR_SENSOR, ROBOT_MOVEMENT)
+LINE_TRACKER = linetracker.LineTracker(
     ROBOT_MOVEMENT, COLOR_SENSOR, GYRO, ZONE_DETECTION
 )
-line_tracker_test = test_linetracker.LineTrackingTest(line_tracker)
 
 
 def main(test: str):
     # movement_test = robot_move_test.MovementTest(TOUCH1, TOUCH2, MOTOR1, MOTOR2)
     try:
         if test == "line":
-            line_tracker_test = test_linetracker.LineTrackingTest(line_tracker)
+            line_tracker_test = test_linetracker.LineTrackingTest(LINE_TRACKER)
             line_tracker_test.test(10, 10)
         elif test == "delivery":
             delivery_system = DeliverySystem(
@@ -58,6 +60,9 @@ def main(test: str):
             # movement_test = robot_move_test.MovementTest(TOUCH1, TOUCH2, MOTOR_LEFT, MOTOR_RIGHT)
             # movement_test.corner_turning_test(TURNING_POWER=25)
             pass
+        elif test == "discover":
+            package_discovery_test = PackageDiscoveryTest(DISCOVERY_SYSTEM)
+            package_discovery_test.test()
         else:
             print("what the helly is ts test")
     except BaseException:

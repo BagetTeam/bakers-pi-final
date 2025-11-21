@@ -1,6 +1,6 @@
 from package_discovery.package_discovery import PackageDiscovery
 
-class PackageDeliveryTest:
+class PackageDiscoveryTest:
     def __init__(self, package_discovery: PackageDiscovery):
         self.package_discovery = package_discovery
     
