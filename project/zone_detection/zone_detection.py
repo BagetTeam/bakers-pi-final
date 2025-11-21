@@ -13,7 +13,7 @@ class ZoneDetection:
     delivery: DeliverySystem
     movement: RobotMovement
     enabled: bool = False
-    has_found: bool = False
+    has_found_red: bool = False
 
     def __init__(
         self,
@@ -70,40 +70,43 @@ class ZoneDetection:
         t = Thread(target=self.__move_around)
         t.start()
 
-        while not self.has_found:
+        while not self.has_found_red:
             color = self.color_sensor.get_current_color()
             if color == "RED":
-                self.has_found = True
-                self.__backtrack()
+                self.has_found_red = True
+                print("FOUND RED")
 
             sleep(0.01)
 
         t.join()
 
     def __backtrack(self):
+        self.movement.set_limits(20)
+        sleep(0.5)
         self.movement.change_relative_angle(-50, -50)
-        sleep(2)
+        sleep(1)
+        self.movement.set_limits(0)
+        sleep(0.5)
 
     def __move_around(self):
+        self.movement.set_limits(20)
+        sleep(0.5)
         self.movement.change_relative_angle(50, 50)
-        sleep(2)
+        sleep(1)
 
-        if self.has_found:
-            self.movement.change_relative_angle(-50, -50)
-            sleep(2)
+        if self.has_found_red:
+            self.__backtrack()
             return
 
-        self.movement.change_relative_angle(50, -50)
-        sleep(2)
+        self.movement.turn_with_angle(-30)
 
-        if self.has_found:
-            self.movement.change_relative_angle(-50, 50)
-            sleep(2)
+        if self.has_found_red:
+            self.movement.turn_with_angle(-self.movement.gyro_sensor.get_angle())
+            self.__backtrack()
             return
 
-        self.movement.change_relative_angle(-100, 100)
-        sleep(2)
+        self.movement.turn_with_angle(60)
+        self.movement.turn_with_angle(-self.movement.gyro_sensor.get_angle())
 
-        if self.has_found:
-            self.movement.change_relative_angle(50, -50)
-            return
+        if self.has_found_red:
+            self.__backtrack()
