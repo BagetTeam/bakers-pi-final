@@ -41,7 +41,7 @@ class PackageDiscovery:
                 if self.color_sensor.get_current_color() == "GREEN":
                     package_found = True
                     print("PACKAGE FOUUND")
-                    self.delivery_system.deliver()
+                    self.delivery_package()
                     break
                 sleep(0.01)
             sleep(0.5)
@@ -60,6 +60,7 @@ class PackageDiscovery:
                 if self.color_sensor.get_current_color() == "GREEN":
                     package_found = True
                     print("PACKAGE FOUUND")
+                    self.delivery_package()
                     break
                 sleep(0.01)
             sleep(0.5)
@@ -72,8 +73,15 @@ class PackageDiscovery:
             self.robot_movement.adjust_speed(BASE_L, BASE_R)
             sleep(0.35)
             self.robot_movement.adjust_speed(0, 0)
+            
+        self.robot_movement.adjust_speed(-BASE_L, -BASE_R)
+        sleep(0.35 * advances)
 
     def delivery_package(self):
         self.robot_movement.adjust_speed(-10, -10)
         sleep(0.2)
         self.delivery_system.deliver()
+        sleep(0.2)
+        self.robot_movement.adjust_speed(10, 10)
+        sleep(0.2)
+        
