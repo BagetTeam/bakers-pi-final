@@ -1,18 +1,25 @@
-from utils.brick import Motor
+from utils.brick import EV3GyroSensor, Motor
 from robot_movement.robot_movement import RobotMovement
 from color_sensor.color_sensor import ColorSensor
 from time import sleep
 
 
-class LineTracker():
-    robot_movement: RobotMovement
+class LineTracker(RobotMovement):
     color_sensor: ColorSensor
+    gyro: EV3GyroSensor
+    isLeft: bool
 
     def __init__(
-        self, robot_movement: RobotMovement, color_sensor: ColorSensor
+        self,
+        left_motor: Motor,
+        right_motor: Motor,
+        color_sensor: ColorSensor,
+        gyro: EV3GyroSensor,
     ):
         self.robot_movement = robot_movement
         self.color_sensor = color_sensor
+        self.isLeft = False
+        self.gyro = gyro
 
     def follow_line3(
         self,
@@ -56,4 +63,44 @@ class LineTracker():
                 # on black/edge, turn right proportionally to how black it is
                 turn_strength = blackness * alpha
                 self.adjust_speed(base_power + turn_strength, base_power)
+
             sleep(0.01)
+
+    def follow_line2(self):
+        R_POWER = 20
+        L_POWER = 10
+
+        self.right_motor.set_power(R_POWER)
+        self.left_motor.set_power(L_POWER)
+
+        while True:
+            rgb = self.color_sensor.get_current_rgb()
+
+            ratio = self.get_ratio(rgb)
+            print(ratio)
+
+            self.left_motor.set_power(L_POWER + (L_POWER / 2) * ratio / 0.20)
+
+            if ratio > 0.8:
+                self.turn_right()
+
+            sleep(0.01)
+
+    def get_ratio(
+        self,
+        rgb: tuple[float, float, float],
+    ) -> float:
+        dist_diff = self.color_sensor.get_distance(
+            self.color_sensor.cache["BLACK"], "WHITE"
+        )
+
+        diff = self.color_sensor.get_distance(rgb, "WHITE")
+
+        return diff / dist_diff
+
+    def turn_right(self):
+        self.right_motor.set_power(-5)
+        self.left_motor.set_power(30)
+        sleep(2)
+        self.right_motor.set_power(20)
+        self.left_motor.set_power(10)

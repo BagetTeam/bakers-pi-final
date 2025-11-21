@@ -47,24 +47,25 @@ class ColorSensor:
     def main(self):
         while self.thread_run:
             _ = self.__detect_color()
-            sleep(0.1)
+            sleep(0.01)
 
     def get_rgb(self) -> tuple[float, float, float]:
         r, g, b = self.sensor.get_rgb()
         self.sensor.wait_ready()
         return r, g, b
 
-    def __set_rgb_color(self, rgb, color):
-        self.current_color = rgb
+    def __set_rgb_color(self, rgb: tuple[float, float, float], color: str):
+        self.current_rgb = self.__normalize_rgb(rgb)
         self.current_color = color
 
     def __normalize_rgb(
         self, rgb: tuple[float, float, float]
     ) -> tuple[float, float, float]:
-        total = sum(rgb)
-        if total == 0:
-            return (0.0, 0.0, 0.0)
-        return rgb[0] / total, rgb[1] / total, rgb[2] / total
+        return rgb
+        # total = sum(rgb)
+        # if total == 0:
+        #     return (0.0, 0.0, 0.0)
+        # return rgb[0] / total, rgb[1] / total, rgb[2] / total
 
     def filter_data(
         self, r: Union[float, None], g: Union[float, None], b: Union[float, None]
@@ -77,9 +78,9 @@ class ColorSensor:
     def __handle_threshold(self, color: str):
         return color
 
-    def get_distance(self, rgb: tuple[float, float, float], target_color: str):
+    def get_distance(self, rgb: tuple[float, float, float], target_color: str) -> float:
         if target_color not in self.cache:
-            return -1
+            return -1.0
         (rr, gg, bb) = self.cache[target_color]
         r, g, b = rgb
         dist = math.sqrt((r - rr) ** 2 + (g - gg) ** 2 + (b - bb) ** 2)

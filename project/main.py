@@ -2,34 +2,30 @@ from color_sensor.color_sensor import ColorSensor
 from robot_delivery.delivery_system import DeliverySystem
 from robot_movement.robot_movement import RobotMovement
 from utils.brick import (
+    EV3GyroSensor,
     Motor,
     TouchSensor,
     EV3ColorSensor,
     reset_brick,
     wait_ready_sensors,
 )
-from robot_movement import robot_movement_test as robot_move_test
-from linetracking_system import test_linetracker
-import sys
-
-from utils.sound import Sound
-from zone_detection.zone_detection import ZoneDetection
+from linetracking_system import linetracker, test_linetracker
 
 TOUCH1 = TouchSensor(1)
 TOUCH2 = TouchSensor(2)
 COLOR = EV3ColorSensor(3)
-MOTOR_LEFT = Motor("A")
-MOTOR_RIGHT = Motor("D")
-MOTOR_DELIVERY = Motor("C")
-
-SOUND = Sound(duration=1, pitch="C4", volume=150)
+GYRO = EV3GyroSensor(4)
+MOTOR1 = Motor("A")
+MOTOR2 = Motor("D")
 wait_ready_sensors(True)
 
 COLOR_SENSOR = ColorSensor(COLOR)
-ROBOT_MOVEMENT = RobotMovement(MOTOR_LEFT, MOTOR_RIGHT)
+line_tracker = linetracker.LineTracker(MOTOR1, MOTOR2, COLOR_SENSOR, GYRO)
+line_tracker_test = test_linetracker.LineTrackingTest(line_tracker)
 
 
-def main(test: str = ""):
+def main():
+    # movement_test = robot_move_test.MovementTest(TOUCH1, TOUCH2, MOTOR1, MOTOR2)
     try:
         if test == "line":
             line_tracker_test = test_linetracker.LineTrackingTest(ROBOT_MOVEMENT, COLOR_SENSOR)
@@ -45,10 +41,11 @@ def main(test: str = ""):
         else:
             print("what the helly is ts test")
     except BaseException:
-        print("WHYYYYYYYYY")
+        print("WHYYYYYYYYY hello world")
         pass
     finally:
         print("Done testing")
+        COLOR_SENSOR.dispose()
         reset_brick()  # Turn off everything on the brick's hardware, and reset it
         exit()
 

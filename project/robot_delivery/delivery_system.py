@@ -31,18 +31,12 @@ class DeliverySystem:
         print("DELIVERING")
         color = self.sensor.get_current_color()
         print(color)
+
+        self.push()
+
         self.sound.play()
         self.sound.wait_done()
-
-        # self.move_back()
-        self.push()
         # self.right_motor.wait_is_stopped()
-
-    def move_back(self, power: int = 50, duration: float = 0):
-        print("moving back")
-        # self.movement.set_limits(20)
-        self.right_motor.set_position_relative(-90)
-        # self.movement.right_motor.wait_is_moving()
 
     # piston-like delivery system
     def push(self, power: int = 50, duration: float = 0.5):
