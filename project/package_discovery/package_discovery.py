@@ -31,53 +31,57 @@ class PackageDiscovery:
         package_found = False
         advances = 0
         self.gyro_sensor.set_reference()
-        print("GOING WITH REFERENCE:", self.gyro_sensor.get_angle())
+        print("GOING WITH REFERENCE:", self.gyro_sensor.get_reference())
         while not package_found and advances < 10:
             advances += 1
             print("Advance:", advances)
             # Check left
             print("Checking LEFT")
-            self.robot_movement.adjust_speed(0, BASE_R)
-            while self.gyro_sensor.get_angle() > -50:
-                if self.color_sensor.get_current_color() == "GREEN":
-                    package_found = True
-                    print("PACKAGE FOUUND")
-                    self.delivery_package()
-                    break
-                sleep(0.01)
+            package_found = self.look_sides(0, BASE_R, 50)
+            self.robot_movement.adjust_speed(0, 0)
             sleep(0.5)
-            print("Turning back LEFT")
-            self.robot_movement.adjust_speed(0, -BASE_R)
-            while self.gyro_sensor.get_angle() < 0:
-                sleep(0.1)
-
             if package_found:  # early exit
                 break
 
             print("Checking RIGHT")
             # Check right
-            self.robot_movement.adjust_speed(BASE_L, 0)
-            while self.gyro_sensor.get_angle() < 50:
-                if self.color_sensor.get_current_color() == "GREEN":
-                    package_found = True
-                    print("PACKAGE FOUUND")
-                    self.delivery_package()
-                    break
-                sleep(0.01)
-            sleep(0.5)
-            print("Turning back RIGHT")
-            self.robot_movement.adjust_speed(-BASE_L, 0)
-            while self.gyro_sensor.get_angle() > 0:
-                sleep(0.1)
-
-            # Advance
-            self.robot_movement.adjust_speed(BASE_L, BASE_R)
-            sleep(advance_time)
+            package_found = self.look_sides(BASE_L, 0, 50)
             self.robot_movement.adjust_speed(0, 0)
+            sleep(0.5)
 
+        # Backtrack
         self.robot_movement.adjust_speed(-BASE_L, -BASE_R)
-        sleep(advance_time * advances)
+        sleep(advance_time * advances * 0.7)
         self.robot_movement.adjust_speed(0, 0)
+
+    def look_sides(self, left_power: float, right_power: float, angle: float) -> bool:
+        isRight = True if left_power > right_power else False
+        package_found = False
+        self.robot_movement.adjust_speed(left_power, right_power)
+
+        while abs(self.gyro_sensor.get_angle()) < abs(angle):
+            if self.color_sensor.get_current_color() == "GREEN":
+                package_found = True
+                print("PACKAGE FOUUND")
+                self.delivery_package()
+                break
+            sleep(0.01)
+        sleep(0.5)
+
+        self.robot_movement.adjust_speed(-left_power, -right_power)
+        if isRight:
+            while self.gyro_sensor.get_angle() > 0:
+                sleep(0.01)
+        else:
+            while self.gyro_sensor.get_angle() < 0:
+                sleep(0.01)
+        
+        cur_ref = self.gyro_sensor.get_reference()
+        self.robot_movement.turn_specific_with_angle(20, 0, 20)        
+        self.robot_movement.turn_specific_with_angle(20, 20, 0)
+        self.gyro_sensor.set_reference(cur_ref)
+
+        return package_found
 
     def delivery_package(self):
         self.robot_movement.adjust_speed(0, 0)

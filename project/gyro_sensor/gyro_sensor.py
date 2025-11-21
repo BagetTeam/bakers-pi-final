@@ -15,3 +15,8 @@ class GyroSensor:
     def set_reference(self):
         self.reference = self.sensor.get_abs_measure()
 
+    def set_reference(self, reference: float):
+        self.reference = reference
+        
+    def get_reference(self):
+        return self.reference

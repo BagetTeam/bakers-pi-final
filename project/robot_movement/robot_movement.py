@@ -66,6 +66,13 @@ class RobotMovement:
         while abs(self.gyro_sensor.get_angle()) < abs(angle):
             sleep(0.01)
         self.adjust_speed(0, 0)
+    
+    def turn_specific_with_angle_without_refs(self, angle: float, left_power: float = 10, right_power: float = 10):
+        self.adjust_speed(left_power, right_power)
+
+        while abs(self.gyro_sensor.get_angle()) < abs(angle):
+            sleep(0.01)
+        self.adjust_speed(0, 0)
 
 
     def adjust_left_speed(self, left_power: float):
