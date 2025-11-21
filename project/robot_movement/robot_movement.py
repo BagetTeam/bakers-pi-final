@@ -50,6 +50,15 @@ class RobotMovement:
             sleep(0.01)
         self.adjust_speed(0, 0)
 
+    def turn_with_angle(self, angle: int):
+        isRight = 1 if angle > 0 else -1
+        self.gyro_sensor.set_reference()
+        self.adjust_speed(isRight * 10, -isRight * 10)
+        while self.gyro_sensor.get_angle() > isRight * 90:
+            sleep(0.01)
+        self.adjust_speed(0, 0)
+        
+
     def adjust_left_speed(self, left_power: float):
         self.left_motor.set_power(left_power)
 
