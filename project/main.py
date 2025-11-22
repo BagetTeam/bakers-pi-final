@@ -63,6 +63,8 @@ def main(test: str):
             package_discovery_test.test()
         else:
             print("what the helly is ts test")
+    except KeyboardInterrupt:
+        print("STOP BUTTON PRESSED/ Ctrl-C - EXITING")
     except BaseException as e:
         print("WHYYYYYYYYY hello world")
         print(e)

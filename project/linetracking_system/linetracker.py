@@ -38,10 +38,10 @@ class LineTracker:
         self.robot_movement.adjust_speed(L_POWER, R_POWER)
 
         while True:
-            if self.stop_button.was_pressed:
-                self.robot_movement.adjust_speed(0, 0)
-                print("STOP BUTTON PRESSED - STOPPING LINE TRACKING")
-                break
+            # if self.stop_button.was_pressed:
+            #     self.robot_movement.adjust_speed(0, 0)
+            #     print("STOP BUTTON PRESSED - STOPPING LINE TRACKING")
+            #     break
 
             rgb = self.color_sensor.get_current_rgb()
             color = self.color_sensor.get_current_color()

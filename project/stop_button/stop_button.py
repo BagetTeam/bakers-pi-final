@@ -3,6 +3,7 @@ from threading import Thread
 from time import sleep
 from typing import Union
 from utils.brick import TouchSensor
+import os, signal
 
 
 class StopButton:
@@ -20,7 +21,8 @@ class StopButton:
     def main(self):
         while self.thread_run:
             if(self.sensor.is_pressed()):
-                self.was_pressed = True
+                # self.was_pressed = True
+                os.kill(os.getpid(), signal.SIGINT)
             sleep(0.01)
 
     def dispose(self):
