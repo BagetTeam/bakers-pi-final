@@ -75,12 +75,12 @@ class PackageDiscovery:
         self.robot_movement.adjust_speed(left_power, right_power)
         self.gyro_sensor.set_reference()
         while abs(self.gyro_sensor.get_angle()) < abs(angle):
-            if (
-                self.color_sensor.get_ratio(
-                    self.color_sensor.get_rgb(), "GREEN", "YELLOW"
-                )
-                > 0.7
-            ):
+            ratio = self.color_sensor.get_ratio(
+                self.color_sensor.get_rgb(), "YELLOW", "GREEN"
+            )
+            print("look_sides ratio", ratio)
+
+            if ratio < 0.6:
                 package_found = True
                 print("PACKAGE FOUUND")
                 self.delivery_package()

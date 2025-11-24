@@ -44,11 +44,12 @@ class LineTracker:
         while True:
             rgb = self.color_sensor.get_current_rgb()
             color = self.color_sensor.get_current_color()
+            print(f"color: {color}")
 
             if color == "ORANGE" and self.zone_detection.enabled:
                 if n_delivery == 2:
                     self.robot_movement.adjust_speed(R_POWER, R_POWER)
-                    sleep(0.5)
+                    sleep(2.2)
                     raise Exception("Done")
 
                 if self.zone_detection.detect_zone():
@@ -58,17 +59,17 @@ class LineTracker:
             ratio = self.color_sensor.get_ratio(rgb, "BLACK", "WHITE")
 
             self.robot_movement.adjust_left_speed(
-                L_POWER + (L_POWER / 2) * ratio / 0.20
+                L_POWER + (L_POWER / 2) * (ratio**2) / 0.20
             )
 
             if ratio > 0.80:
                 self.turn_count += 1
-                print(self.turn_count)
+                print(f"self.turn_count: {self.turn_count}")
 
                 if self.turn_count % 4 != 3:
                     if n_delivery == 2 and self.turn_count == 15:
-                        self.robot_movement.adjust_speed(R_POWER + 5, R_POWER)
-                        sleep(0.2)
+                        self.robot_movement.adjust_speed(R_POWER, R_POWER)
+                        sleep(0.3)
                         self.robot_movement.adjust_speed(L_POWER, R_POWER)
                         self.turn_count += 1
                     else:
@@ -76,12 +77,15 @@ class LineTracker:
                         sleep(0.1)
                         self.robot_movement.adjust_speed(L_POWER, R_POWER)
                 else:
-                    if n_delivery == 2:
-                        if self.turn_count == 7 or self.turn_count == 17:
-                            self.turn_right(90)
+                    if n_delivery == 2 and (
+                        self.turn_count == 7 or self.turn_count == 17
+                    ):
+                        self.turn_right(90)
+                        sleep(0.1)
+                        self.robot_movement.adjust_speed(L_POWER, R_POWER)
                     else:
-                        self.robot_movement.adjust_speed(R_POWER + 5, R_POWER)
-                        sleep(0.2)
+                        self.robot_movement.adjust_speed(R_POWER, R_POWER)
+                        sleep(0.3)
                         self.robot_movement.adjust_speed(L_POWER, R_POWER)
 
             sleep(0.01)
@@ -93,8 +97,8 @@ class LineTracker:
         if any(i == self.turn_count for i in [1, 5, 8, 13]):
             self.robot_movement.intersection_turn_right(deg)
         else:
-            self.robot_movement.adjust_speed(20, -5)
             self.gyro.set_reference()
+            self.robot_movement.adjust_speed(30, -5)
 
             seen_white = False
             seen_black = False
@@ -104,7 +108,7 @@ class LineTracker:
                 rgb = self.color_sensor.get_current_rgb()
                 ratio = self.color_sensor.get_ratio(rgb, "BLACK", "WHITE")
 
-                if seen_white and seen_black and ratio < 0.5:
+                if seen_white and seen_black and ratio < 0.7:
                     break
 
                 if color == "WHITE":
