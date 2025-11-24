@@ -44,6 +44,8 @@ class LineTracker:
 
             if color == "ORANGE" and self.zone_detection.enabled:
                 if n_delivery == 2:
+                    self.robot_movement.adjust_speed(R_POWER, R_POWER)
+                    sleep(0.5)
                     raise Exception("Done")
 
                 if self.zone_detection.detect_zone():
