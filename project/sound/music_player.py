@@ -107,6 +107,10 @@ class MusicLooper:
         if not effect.exists():
             raise FileNotFoundError(effect)
         
+        effect_thread = threading.Thread(target=self._play_effect_thread, args=(effect,), daemon=True)
+        effect_thread.start()
+        
+    def _play_effect_thread(self, effect: Path):
         with self._effect_lock:
             # Pause background
             self._pause_event.clear()
