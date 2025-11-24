@@ -35,7 +35,6 @@ class MusicLooper:
     def start(self):
         """Start the background music loop."""
 
-        return
         if self._thread and self._thread.is_alive():
             return
 
@@ -106,7 +105,6 @@ class MusicLooper:
         Play an effect WAV file, interrupting the background.
         This call blocks until the effect finishes.
         """
-        return
         effect_path = self.effects.get(effect_name)
         if not effect_path:
             raise ValueError(f"Effect '{effect_name}' not found")
@@ -169,4 +167,3 @@ if __name__ == "__main__":
         print("Stopping...")
     finally:
         looper.stop()
-
