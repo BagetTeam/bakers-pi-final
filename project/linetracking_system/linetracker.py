@@ -4,6 +4,7 @@ from robot_movement.robot_movement import RobotMovement
 from color_sensor.color_sensor import ColorSensor
 from stop_button.stop_button import StopButton
 from time import sleep
+from sound.music_player import MusicLooper
 
 
 class LineTracker:
@@ -23,6 +24,7 @@ class LineTracker:
         gyro: GyroSensor,
         zone_detection: ZoneDetection,
         stop_button: StopButton,
+        sound_engine: MusicLooper,
     ):
         self.stop_button = stop_button
         self.robot_movement = robot_movement
@@ -30,6 +32,7 @@ class LineTracker:
         self.isLeft = False
         self.gyro = gyro
         self.zone_detection = zone_detection
+        self.sound_engine = sound_engine
 
     def follow_line(self):
         R_POWER = 30
@@ -119,4 +122,6 @@ class LineTracker:
 
                 sleep(0.01)
 
+        self.sound_engine.play_effect("TURNING")
+        self.robot_movement.intersection_turn_right(deg)
         self.zone_detection.enabled = True
