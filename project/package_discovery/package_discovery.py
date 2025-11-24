@@ -78,6 +78,7 @@ class PackageDiscovery:
             sleep(0.01)
         sleep(0.5)
 
+        angle = self.gyro_sensor.get_angle()
         while True:
             cur_angle = self.gyro_sensor.get_angle()
 
