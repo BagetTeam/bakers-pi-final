@@ -75,7 +75,12 @@ class PackageDiscovery:
         self.robot_movement.adjust_speed(left_power, right_power)
         self.gyro_sensor.set_reference()
         while abs(self.gyro_sensor.get_angle()) < abs(angle):
-            if self.color_sensor.get_ratio(self.color_sensor.get_rgb(), "GREEN", "YELLOW") > 0.5:
+            if (
+                self.color_sensor.get_ratio(
+                    self.color_sensor.get_rgb(), "GREEN", "YELLOW"
+                )
+                > 0.7
+            ):
                 package_found = True
                 print("PACKAGE FOUUND")
                 self.delivery_package()
@@ -85,7 +90,7 @@ class PackageDiscovery:
 
         angle = self.gyro_sensor.get_angle()
         self.gyro_sensor.set_reference()
-        while (cur_angle:=abs(self.gyro_sensor.get_angle())) < abs(angle):
+        while (cur_angle := abs(self.gyro_sensor.get_angle())) < abs(angle):
             speed_l = (
                 0
                 if left_power == 0
@@ -114,13 +119,13 @@ class PackageDiscovery:
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.2)
         self.robot_movement.adjust_speed(-20, -20)
-        sleep(1)
+        sleep(0.7)
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.5)
         self.delivery_system.deliver()
         self.sound_engine.play_effect("DELIVERY")
         sleep(0.5)
         self.robot_movement.adjust_speed(20, 20)
-        sleep(1)
+        sleep(0.7)
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.2)

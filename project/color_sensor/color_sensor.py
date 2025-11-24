@@ -116,19 +116,14 @@ class ColorSensor:
         return self.current_rgb
 
     def get_ratio(
-        self,
-        rgb: tuple[float, float, float],
-        target1: str,
-        target2: str
+        self, rgb: tuple[float, float, float], target1: str, target2: str
     ) -> float:
-        dist_diff = self.color_sensor.get_distance(
-            self.color_sensor.cache[target1], target2
-        )
+        dist_diff = self.get_distance(self.cache[target1], target2)
 
-        diff = self.color_sensor.get_distance(rgb, target2)
+        diff = self.get_distance(rgb, target2)
 
         return diff / dist_diff
-    
+
     def dispose(self):
         print("disposing color sensor")
         self.thread_run = False

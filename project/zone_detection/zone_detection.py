@@ -72,7 +72,7 @@ class ZoneDetection:
         # self.movement.change_relative_angle(-50, -50)
         # sleep(0.5)
         # self.movement.set_limits(0)
-        # sleep(0.5)
+        sleep(0.5)
 
         self.movement.turn_specific_with_angle(180, -25, 30)
 

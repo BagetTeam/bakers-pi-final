@@ -86,15 +86,13 @@ class LineTracker:
 
             sleep(0.01)
 
-    
-
     def turn_right(self, deg: int):
         print("turning right")
 
         if any(i == self.turn_count for i in [1, 5, 8, 13]):
             self.robot_movement.intersection_turn_right(deg)
         else:
-            self.robot_movement.adjust_speed(30, -5)
+            self.robot_movement.adjust_speed(20, -5)
             self.gyro.set_reference()
 
             seen_white = False
@@ -103,8 +101,7 @@ class LineTracker:
             while True:
                 color = self.color_sensor.get_current_color()
                 rgb = self.color_sensor.get_current_rgb()
-                ratio = self.get_ratio(rgb)
-                print(f"ratio: {ratio}")
+                ratio = self.color_sensor.get_ratio(rgb, "BLACK", "WHITE")
 
                 if seen_white and seen_black and ratio < 0.5:
                     break

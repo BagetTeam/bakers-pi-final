@@ -13,9 +13,7 @@ class DeliverySystem:
     deg: int = 0
     has_first_been_pushed = False
 
-    def __init__(
-        self, motor: Motor, sensor: ColorSensor, right_motor: Motor
-    ):
+    def __init__(self, motor: Motor, sensor: ColorSensor, right_motor: Motor):
         print("initializing delivery system")
 
         self.delivery_motor = motor
@@ -41,6 +39,6 @@ class DeliverySystem:
             self.delivery_motor.set_position(0)
             sleep(2)
 
-        self.delivery_motor.set_position(100)
+        self.delivery_motor.set_position(-100)
         sleep(1)
         self.has_first_been_pushed = True
