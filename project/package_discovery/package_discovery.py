@@ -67,7 +67,7 @@ class PackageDiscovery:
         isRight = True if left_power > right_power else False
         MINN_SPEED = max(right_power, left_power)
         package_found = False
-        
+
         self.robot_movement.adjust_speed(left_power, right_power)
         while abs(self.gyro_sensor.get_angle()) < abs(angle):
             if self.color_sensor.get_current_color() == "GREEN":
@@ -89,14 +89,14 @@ class PackageDiscovery:
                 if left_power == 0
                 else MINN_SPEED
                 + (2 * left_power - MINN_SPEED)
-                * math.sin(math.pi * cur_angle / angle)
+                * math.sin(math.pi * abs(cur_angle / angle))
             )
             speed_r = (
                 0
                 if right_power == 0
                 else MINN_SPEED
                 + (2 * right_power - MINN_SPEED)
-                * math.sin(math.pi * cur_angle / angle)
+                * math.sin(math.pi * abs(cur_angle / angle))
             )
 
             self.robot_movement.adjust_speed(-speed_l, -speed_r)
