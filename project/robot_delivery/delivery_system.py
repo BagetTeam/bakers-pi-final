@@ -41,6 +41,6 @@ class DeliverySystem:
             self.delivery_motor.set_position(0)
             sleep(2)
 
-        self.delivery_motor.set_position(135)
+        self.delivery_motor.set_position(100)
         sleep(2)
         self.has_first_been_pushed = True

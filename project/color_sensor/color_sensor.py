@@ -51,7 +51,7 @@ class ColorSensor:
 
     def get_rgb(self) -> tuple[float, float, float]:
         r, g, b = self.sensor.get_rgb()
-        self.sensor.wait_ready()
+        # self.sensor.wait_ready()
         return r, g, b
 
     def __set_rgb_color(self, rgb: tuple[float, float, float], color: str):

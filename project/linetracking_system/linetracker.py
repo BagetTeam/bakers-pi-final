@@ -1,11 +1,13 @@
 from zone_detection.zone_detection import ZoneDetection
-from utils.brick import EV3GyroSensor, Motor
+from utils.brick import EV3GyroSensor, Motor, TouchSensor
 from robot_movement.robot_movement import RobotMovement
 from color_sensor.color_sensor import ColorSensor
+from stop_button.stop_button import StopButton
 from time import sleep
 
 
 class LineTracker:
+    stop_button: StopButton
     color_sensor: ColorSensor
     robot_movement: RobotMovement
     gyro: EV3GyroSensor
@@ -20,7 +22,9 @@ class LineTracker:
         color_sensor: ColorSensor,
         gyro: EV3GyroSensor,
         zone_detection: ZoneDetection,
+        stop_button: StopButton,
     ):
+        self.stop_button = stop_button
         self.robot_movement = robot_movement
         self.color_sensor = color_sensor
         self.isLeft = False
@@ -34,6 +38,11 @@ class LineTracker:
         self.robot_movement.adjust_speed(L_POWER, R_POWER)
 
         while True:
+            # if self.stop_button.was_pressed:
+            #     self.robot_movement.adjust_speed(0, 0)
+            #     print("STOP BUTTON PRESSED - STOPPING LINE TRACKING")
+            #     break
+
             rgb = self.color_sensor.get_current_rgb()
             color = self.color_sensor.get_current_color()
 
@@ -52,7 +61,7 @@ class LineTracker:
                 print(self.turn_count)
 
                 if self.turn_count % 4 != 3:
-                    self.turn_right()
+                    self.turn_right(92)
                     sleep(0.1)
                     self.robot_movement.adjust_speed(L_POWER, R_POWER)
                 else:
@@ -74,7 +83,7 @@ class LineTracker:
 
         return diff / dist_diff
 
-    def turn_right(self):
+    def turn_right(self, deg: int):
         print("turning right")
-        self.robot_movement.intersection_turn_right()
+        self.robot_movement.intersection_turn_right(deg)
         self.zone_detection.enabled = True
