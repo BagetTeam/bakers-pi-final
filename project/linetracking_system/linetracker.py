@@ -55,7 +55,7 @@ class LineTracker:
                     n_delivery += 1
                 self.robot_movement.adjust_speed(L_POWER, R_POWER)
 
-            ratio = self.get_ratio(rgb)
+            ratio = self.color_sensor.get_ratio(rgb, "BLACK", "WHITE")
 
             self.robot_movement.adjust_left_speed(
                 L_POWER + (L_POWER / 2) * ratio / 0.20
@@ -86,17 +86,7 @@ class LineTracker:
 
             sleep(0.01)
 
-    def get_ratio(
-        self,
-        rgb: tuple[float, float, float],
-    ) -> float:
-        dist_diff = self.color_sensor.get_distance(
-            self.color_sensor.cache["BLACK"], "WHITE"
-        )
-
-        diff = self.color_sensor.get_distance(rgb, "WHITE")
-
-        return diff / dist_diff
+    
 
     def turn_right(self, deg: int):
         print("turning right")
