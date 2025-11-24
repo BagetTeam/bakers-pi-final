@@ -112,14 +112,13 @@ class PackageDiscovery:
     def delivery_package(self):
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.2)
-        self.robot_movement.adjust_speed(0, -10)
+        self.robot_movement.adjust_speed(0, -20)
         sleep(1)
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.5)
         self.delivery_system.deliver()
         sleep(0.5)
-        self.robot_movement.adjust_speed(0, 10)
+        self.robot_movement.adjust_speed(0, 20)
         sleep(1)
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.2)
-
