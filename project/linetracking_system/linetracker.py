@@ -90,6 +90,7 @@ class LineTracker:
 
     def turn_right(self, deg: int):
         print("turning right")
+        self.sound_engine.play_effect("TURNING")
 
         if any(i == self.turn_count for i in [1, 5, 8, 13]):
             self.robot_movement.intersection_turn_right(deg)
