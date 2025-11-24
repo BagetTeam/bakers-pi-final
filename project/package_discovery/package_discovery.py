@@ -109,7 +109,7 @@ class PackageDiscovery:
 
     def ease_out_speed(self, angle, max_angle, max_speed):
         """Returns a scaled speed that eases out as angle -> 0."""
-        x = min(abs(angle) / max_angle, 1.0)
+        x = min(abs(angle) / abs(max_angle), 1.0)
 
         factor = math.sin(x * (math.pi / 2))
 
