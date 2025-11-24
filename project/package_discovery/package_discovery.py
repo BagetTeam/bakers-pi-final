@@ -73,6 +73,7 @@ class PackageDiscovery:
         package_found = False
 
         self.robot_movement.adjust_speed(left_power, right_power)
+        self.gyro_sensor.set_reference()
         while abs(self.gyro_sensor.get_angle()) < abs(angle):
             if self.color_sensor.get_current_color() == "GREEN":
                 package_found = True
