@@ -1,3 +1,4 @@
+import math
 from time import sleep
 from color_sensor.color_sensor import ColorSensor
 from gyro_sensor.gyro_sensor import GyroSensor
@@ -39,7 +40,7 @@ class PackageDiscovery:
             print("Checking LEFT")
             package_found = self.look_sides(0, BASE_R, 70)
             self.robot_movement.adjust_speed(0, 0)
-            sleep(0.5)
+            sleep(0.2)
             if package_found:  # early exit
                 break
 
@@ -47,7 +48,7 @@ class PackageDiscovery:
             # Check right
             package_found = self.look_sides(BASE_L, 0, 70)
             self.robot_movement.adjust_speed(0, 0)
-            sleep(0.5)
+            sleep(0.2)
 
             self.robot_movement.adjust_speed(10, 10)
             sleep(0.4)
@@ -66,6 +67,7 @@ class PackageDiscovery:
         isRight = True if left_power > right_power else False
         package_found = False
         self.robot_movement.adjust_speed(left_power, right_power)
+        MINN_SPEED = 5
 
         while abs(self.gyro_sensor.get_angle()) < abs(angle):
             if self.color_sensor.get_current_color() == "GREEN":
@@ -76,13 +78,31 @@ class PackageDiscovery:
             sleep(0.01)
         sleep(0.5)
 
-        self.robot_movement.adjust_speed(-2 * left_power, -2 * right_power)
-        if isRight:
-            while self.gyro_sensor.get_angle() > 0:
-                sleep(0.01)
-        else:
-            while self.gyro_sensor.get_angle() < 0:
-                sleep(0.01)
+        while True:
+            cur_angle = self.gyro_sensor.get_angle()
+
+            if (isRight and cur_angle <= 0) or (not isRight and cur_angle >= 0):
+                break
+
+            speed_l = (
+                0
+                if left_power == 0
+                else MINN_SPEED
+                + (2 * left_power - MINN_SPEED)
+                * (1 - math.cos(math.pi * cur_angle / angle))
+                / 2
+            )
+            speed_r = (
+                0
+                if right_power == 0
+                else MINN_SPEED
+                + (2 * right_power - MINN_SPEED)
+                * (1 - math.cos(math.pi * cur_angle / angle))
+                / 2
+            )
+
+            self.robot_movement.adjust_speed(-speed_l, -speed_r)
+            sleep(0.01)
 
         self.robot_movement.adjust_speed(10, 10)
         sleep(0.4)
@@ -103,3 +123,4 @@ class PackageDiscovery:
         sleep(1)
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.2)
+
