@@ -1,5 +1,5 @@
+from gyro_sensor.gyro_sensor import GyroSensor
 from zone_detection.zone_detection import ZoneDetection
-from utils.brick import EV3GyroSensor
 from robot_movement.robot_movement import RobotMovement
 from color_sensor.color_sensor import ColorSensor
 from stop_button.stop_button import StopButton
@@ -10,7 +10,7 @@ class LineTracker:
     stop_button: StopButton
     color_sensor: ColorSensor
     robot_movement: RobotMovement
-    gyro: EV3GyroSensor
+    gyro: GyroSensor
     isLeft: bool
     zone_detection: ZoneDetection
     turn_count: int = 0
@@ -20,7 +20,7 @@ class LineTracker:
         self,
         robot_movement: RobotMovement,
         color_sensor: ColorSensor,
-        gyro: EV3GyroSensor,
+        gyro: GyroSensor,
         zone_detection: ZoneDetection,
         stop_button: StopButton,
     ):
@@ -53,7 +53,7 @@ class LineTracker:
             ratio = self.get_ratio(rgb)
 
             self.robot_movement.adjust_left_speed(
-                L_POWER + (L_POWER / 2) * (ratio**2) / 0.16
+                L_POWER + (L_POWER / 2) * (ratio**2) / 0.20
             )
 
             if ratio > 0.80:
@@ -69,7 +69,7 @@ class LineTracker:
                         if self.turn_count == 7 or self.turn_count == 15:
                             self.turn_right(90)
                     else:
-                        self.robot_movement.adjust_speed(R_POWER, R_POWER)
+                        self.robot_movement.adjust_speed(R_POWER + 2, R_POWER)
                         sleep(1)
                         self.robot_movement.adjust_speed(L_POWER, R_POWER)
 
@@ -89,11 +89,28 @@ class LineTracker:
 
     def turn_right(self, deg: int):
         print("turning right")
-        self.robot_movement.intersection_turn_right(deg)
-        # self.robot_movement.adjust_speed(30, -5)
 
-        # seen_white = False
-        # seen_black = False
+        if any(i == self.turn_count for i in [1, 5, 8, 13]):
+            self.robot_movement.intersection_turn_right(deg)
+        else:
+            self.robot_movement.adjust_speed(30, -5)
+            self.gyro.set_reference()
+
+            seen_white = False
+            seen_black = False
+
+            while True:
+                color = self.color_sensor.get_current_color()
+
+                if color == "WHITE":
+                    if seen_white and seen_black:
+                        break
+
+                    seen_white = True
+
+                if seen_white and color == "BLACK":
+                    seen_black = True
+
+                sleep(0.01)
 
         self.zone_detection.enabled = True
-
