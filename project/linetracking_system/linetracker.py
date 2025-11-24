@@ -47,16 +47,18 @@ class LineTracker:
 
             if color == "ORANGE" and self.zone_detection.enabled:
                 if n_delivery == 2:
+                    self.robot_movement.adjust_speed(R_POWER, R_POWER)
+                    sleep(0.5)
                     raise Exception("Done")
 
                 if self.zone_detection.detect_zone():
                     n_delivery += 1
                 self.robot_movement.adjust_speed(L_POWER, R_POWER)
 
-            ratio = self.get_ratio(rgb)
+            ratio = self.color_sensor.get_ratio(rgb, "BLACK", "WHITE")
 
             self.robot_movement.adjust_left_speed(
-                L_POWER + (L_POWER / 2) * (ratio**2) / 0.20
+                L_POWER + (L_POWER / 2) * ratio / 0.20
             )
 
             if ratio > 0.80:
@@ -64,7 +66,7 @@ class LineTracker:
                 print(self.turn_count)
 
                 if self.turn_count % 4 != 3:
-                    if n_delivery == 2 and self.turn_count == 13:
+                    if n_delivery == 2 and self.turn_count == 15:
                         self.robot_movement.adjust_speed(R_POWER + 5, R_POWER)
                         sleep(0.2)
                         self.robot_movement.adjust_speed(L_POWER, R_POWER)
@@ -75,7 +77,7 @@ class LineTracker:
                         self.robot_movement.adjust_speed(L_POWER, R_POWER)
                 else:
                     if n_delivery == 2:
-                        if self.turn_count == 7 or self.turn_count == 15:
+                        if self.turn_count == 7 or self.turn_count == 17:
                             self.turn_right(90)
                     else:
                         self.robot_movement.adjust_speed(R_POWER + 5, R_POWER)
@@ -84,17 +86,7 @@ class LineTracker:
 
             sleep(0.01)
 
-    def get_ratio(
-        self,
-        rgb: tuple[float, float, float],
-    ) -> float:
-        dist_diff = self.color_sensor.get_distance(
-            self.color_sensor.cache["BLACK"], "WHITE"
-        )
-
-        diff = self.color_sensor.get_distance(rgb, "WHITE")
-
-        return diff / dist_diff
+    
 
     def turn_right(self, deg: int):
         print("turning right")
@@ -111,16 +103,20 @@ class LineTracker:
 
             while True:
                 color = self.color_sensor.get_current_color()
+                rgb = self.color_sensor.get_current_rgb()
+                ratio = self.get_ratio(rgb)
+                print(f"ratio: {ratio}")
+
+                if seen_white and seen_black and ratio < 0.5:
+                    break
 
                 if color == "WHITE":
-                    if seen_white and seen_black:
-                        break
-
                     seen_white = True
 
                 if seen_white and color == "BLACK":
                     seen_black = True
 
                 sleep(0.01)
-        self.robot_movement.intersection_turn_right(deg)
+
+        # self.sound_engine.play_effect("TURNING")
         self.zone_detection.enabled = True

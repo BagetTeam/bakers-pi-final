@@ -3,6 +3,7 @@ import time
 from pathlib import Path
 import simpleaudio as sa
 
+
 class MusicLooper:
     def __init__(self):
         self.bg_path = Path("sounds/background.wav")
@@ -12,30 +13,31 @@ class MusicLooper:
         }
         if not self.bg_path.exists():
             raise FileNotFoundError(self.bg_path)
-        
+
         # Load background audio data once
         self._bg_wave = sa.WaveObject.from_wave_file(str(self.bg_path))
-        
+
         # State management
         self._thread = None
         self._stop_event = threading.Event()
         self._pause_event = threading.Event()
         self._pause_event.set()  # Start unpaused
-        
+
         # Lock for all audio operations
         self._audio_lock = threading.Lock()
-        
+
         # Current play object (always accessed with lock held)
         self._current_play_obj = None
-        
+
         # Effect lock
         self._effect_lock = threading.Lock()
 
     def start(self):
         """Start the background music loop."""
+
         if self._thread and self._thread.is_alive():
             return
-        
+
         self._stop_event.clear()
         self._thread = threading.Thread(target=self._bg_loop, daemon=True)
         self._thread.start()
@@ -45,20 +47,20 @@ class MusicLooper:
         while not self._stop_event.is_set():
             # Wait until unpaused
             self._pause_event.wait()
-            
+
             if self._stop_event.is_set():
                 break
-            
+
             # Start playback with lock held
             with self._audio_lock:
                 if self._stop_event.is_set() or not self._pause_event.is_set():
                     continue
                 self._current_play_obj = self._bg_wave.play()
-            
+
             # Monitor playback (check lock periodically)
             while True:
                 time.sleep(0.05)  # Longer sleep to reduce contention
-                
+
                 # Re-check pause event frequently
                 if not self._pause_event.is_set():
                     with self._audio_lock:
@@ -66,13 +68,16 @@ class MusicLooper:
                             self._current_play_obj.stop()
                             self._current_play_obj = None
                     break
-                
+
                 # Check if naturally finished
                 with self._audio_lock:
-                    if self._current_play_obj and not self._current_play_obj.is_playing():
+                    if (
+                        self._current_play_obj
+                        and not self._current_play_obj.is_playing()
+                    ):
                         self._current_play_obj = None
                         break
-                
+
                 # Check stop event
                 if self._stop_event.is_set():
                     with self._audio_lock:
@@ -85,12 +90,12 @@ class MusicLooper:
         """Stop all playback and the background thread."""
         self._stop_event.set()
         self._pause_event.set()  # Unblock if paused
-        
+
         with self._audio_lock:
             if self._current_play_obj:
                 self._current_play_obj.stop()
                 self._current_play_obj = None
-        
+
         if self._thread:
             self._thread.join(timeout=2.0)
             self._thread = None
@@ -114,16 +119,16 @@ class MusicLooper:
         with self._effect_lock:
             # Pause background
             self._pause_event.clear()
-            
+
             # Stop current background playback
             with self._audio_lock:
                 if self._current_play_obj:
                     self._current_play_obj.stop()
                     self._current_play_obj = None
-            
+
             # Small delay to let audio system settle
             time.sleep(0.05)
-            
+
             # Play effect
             try:
                 effect_wave = sa.WaveObject.from_wave_file(str(effect))
