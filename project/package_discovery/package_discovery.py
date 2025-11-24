@@ -39,7 +39,7 @@ class PackageDiscovery:
             print("Checking LEFT")
             package_found = self.look_sides(0, BASE_R, 70)
             self.robot_movement.adjust_speed(0, 0)
-            sleep(0.5)
+            sleep(0.2)
             if package_found:  # early exit
                 break
 
@@ -47,7 +47,7 @@ class PackageDiscovery:
             # Check right
             package_found = self.look_sides(BASE_L, 0, 70)
             self.robot_movement.adjust_speed(0, 0)
-            sleep(0.5)
+            sleep(0.2)
 
             self.robot_movement.adjust_speed(10, 10)
             sleep(0.4)
