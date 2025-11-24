@@ -29,8 +29,8 @@ class PackageDiscovery:
         self.sound_engine = sound_engine
 
     def explore_room(self):
-        BASE_L = 20
-        BASE_R = 20
+        BASE_L = 30
+        BASE_R = 30
         advance_time = 0.5
 
         package_found = False
