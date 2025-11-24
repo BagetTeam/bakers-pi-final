@@ -57,11 +57,13 @@ class ZoneDetection:
 
         t.join()
 
+        package_found = False
         if not self.has_found_red:
-            self.package_discorvery.explore_room()
+            package_found = self.package_discorvery.explore_room()
 
         self.__backtrack()
         self.is_discovering = False
+        return package_found
 
     def __backtrack(self):
         self.movement.set_limits(20)

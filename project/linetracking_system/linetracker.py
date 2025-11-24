@@ -1,5 +1,5 @@
 from zone_detection.zone_detection import ZoneDetection
-from utils.brick import EV3GyroSensor, Motor, TouchSensor
+from utils.brick import EV3GyroSensor
 from robot_movement.robot_movement import RobotMovement
 from color_sensor.color_sensor import ColorSensor
 from stop_button.stop_button import StopButton
@@ -32,42 +32,46 @@ class LineTracker:
         self.zone_detection = zone_detection
 
     def follow_line(self):
-        R_POWER = 20
-        L_POWER = 10
+        R_POWER = 30
+        L_POWER = 20
 
         self.robot_movement.adjust_speed(L_POWER, R_POWER)
+        n_delivery = 0
 
         while True:
-            # if self.stop_button.was_pressed:
-            #     self.robot_movement.adjust_speed(0, 0)
-            #     print("STOP BUTTON PRESSED - STOPPING LINE TRACKING")
-            #     break
-
             rgb = self.color_sensor.get_current_rgb()
             color = self.color_sensor.get_current_color()
 
             if color == "ORANGE" and self.zone_detection.enabled:
-                self.zone_detection.detect_zone()
+                if n_delivery == 2:
+                    raise Exception("Done")
+
+                if self.zone_detection.detect_zone():
+                    n_delivery += 1
                 self.robot_movement.adjust_speed(L_POWER, R_POWER)
 
             ratio = self.get_ratio(rgb)
 
             self.robot_movement.adjust_left_speed(
-                L_POWER + (L_POWER / 2) * ratio / 0.16
+                L_POWER + (L_POWER / 2) * (ratio**2) / 0.16
             )
 
-            if ratio > 0.8:
+            if ratio > 0.80:
                 self.turn_count += 1
                 print(self.turn_count)
 
                 if self.turn_count % 4 != 3:
-                    self.turn_right(92)
+                    self.turn_right(90)
                     sleep(0.1)
                     self.robot_movement.adjust_speed(L_POWER, R_POWER)
                 else:
-                    self.robot_movement.adjust_speed(R_POWER, R_POWER)
-                    sleep(1)
-                    self.robot_movement.adjust_speed(L_POWER, R_POWER)
+                    if n_delivery == 2:
+                        if self.turn_count == 7 or self.turn_count == 15:
+                            self.turn_right(90)
+                    else:
+                        self.robot_movement.adjust_speed(R_POWER, R_POWER)
+                        sleep(1)
+                        self.robot_movement.adjust_speed(L_POWER, R_POWER)
 
             sleep(0.01)
 
@@ -86,4 +90,10 @@ class LineTracker:
     def turn_right(self, deg: int):
         print("turning right")
         self.robot_movement.intersection_turn_right(deg)
+        # self.robot_movement.adjust_speed(30, -5)
+
+        # seen_white = False
+        # seen_black = False
+
         self.zone_detection.enabled = True
+
