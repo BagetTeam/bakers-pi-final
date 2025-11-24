@@ -61,9 +61,15 @@ class LineTracker:
                 print(self.turn_count)
 
                 if self.turn_count % 4 != 3:
-                    self.turn_right(90)
-                    sleep(0.1)
-                    self.robot_movement.adjust_speed(L_POWER, R_POWER)
+                    if n_delivery == 2 and self.turn_count == 13:
+                        self.robot_movement.adjust_speed(R_POWER + 5, R_POWER)
+                        sleep(0.2)
+                        self.robot_movement.adjust_speed(L_POWER, R_POWER)
+                        self.turn_count += 1
+                    else:
+                        self.turn_right(90)
+                        sleep(0.1)
+                        self.robot_movement.adjust_speed(L_POWER, R_POWER)
                 else:
                     if n_delivery == 2:
                         if self.turn_count == 7 or self.turn_count == 15:
@@ -93,7 +99,7 @@ class LineTracker:
         if any(i == self.turn_count for i in [1, 5, 8, 13]):
             self.robot_movement.intersection_turn_right(deg)
         else:
-            self.robot_movement.adjust_speed(30, 0)
+            self.robot_movement.adjust_speed(30, -5)
             self.gyro.set_reference()
 
             seen_white = False

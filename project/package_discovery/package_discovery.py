@@ -78,6 +78,7 @@ class PackageDiscovery:
             sleep(0.01)
         sleep(0.5)
 
+        angle = self.gyro_sensor.get_angle()
         while True:
             cur_angle = self.gyro_sensor.get_angle()
 
@@ -88,13 +89,15 @@ class PackageDiscovery:
                 0
                 if left_power == 0
                 else MINN_SPEED
-                + (2 * left_power - MINN_SPEED) * math.sin(math.pi * cur_angle / angle)
+                + (2 * left_power - MINN_SPEED)
+                * math.sin(math.pi * abs(cur_angle / angle))
             )
             speed_r = (
                 0
                 if right_power == 0
                 else MINN_SPEED
-                + (2 * right_power - MINN_SPEED) * math.sin(math.pi * cur_angle / angle)
+                + (2 * right_power - MINN_SPEED)
+                * math.sin(math.pi * abs(cur_angle / angle))
             )
 
             self.robot_movement.adjust_speed(-speed_l, -speed_r)

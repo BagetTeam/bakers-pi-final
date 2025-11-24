@@ -34,8 +34,9 @@ class ZoneDetection:
 
     def detect_zone(self):
         self.movement.adjust_speed(0, 0)
-        self.discover_color()
+        has_found = self.discover_color()
         self.enabled = False
+        return has_found
 
     def discover_color(self):
         print("discovering")
