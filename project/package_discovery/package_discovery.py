@@ -1,3 +1,4 @@
+import math
 from time import sleep
 from color_sensor.color_sensor import ColorSensor
 from gyro_sensor.gyro_sensor import GyroSensor
@@ -74,13 +75,17 @@ class PackageDiscovery:
             sleep(0.01)
         sleep(0.5)
 
-        self.robot_movement.adjust_speed(-3*left_power, -3*right_power)
-        if isRight:
-            while self.gyro_sensor.get_angle() > 0:
-                sleep(0.01)
-        else:
-            while self.gyro_sensor.get_angle() < 0:
-                sleep(0.01)
+        while True:
+            cur_angle = self.gyro_sensor.get_angle()
+
+            if (isRight and angle <= 0) or (not isRight and angle >= 0):
+                break
+            
+            speed_l = 0 if left_power == 0 else self.ease_out_speed(cur_angle, angle, 2*left_power)
+            speed_r = 0 if right_power == 0 else self.ease_out_speed(cur_angle, angle, 2*right_power)
+            
+            self.robot_movement.adjust_speed(speed_l, speed_r)
+            sleep(0.01)
 
         self.robot_movement.adjust_speed(10, 10)
         sleep(0.4)
@@ -101,3 +106,13 @@ class PackageDiscovery:
         sleep(1)
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.2)
+
+    def ease_out_speed(self, angle, max_angle, max_speed):
+        """Returns a scaled speed that eases out as angle → 0."""
+        # Normalize to 0–1
+        x = min(abs(angle) / max_angle, 1.0)
+
+        # Use smooth sin easing
+        factor = math.sin(x * (math.pi / 2))
+
+        return max_speed * factor
