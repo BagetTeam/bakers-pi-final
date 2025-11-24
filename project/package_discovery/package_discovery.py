@@ -65,6 +65,7 @@ class PackageDiscovery:
         isRight = True if left_power > right_power else False
         package_found = False
         self.robot_movement.adjust_speed(left_power, right_power)
+        MINN_SPEED = 5
 
         while abs(self.gyro_sensor.get_angle()) < abs(angle):
             if self.color_sensor.get_current_color() == "GREEN":
@@ -78,13 +79,13 @@ class PackageDiscovery:
         while True:
             cur_angle = self.gyro_sensor.get_angle()
 
-            if (isRight and angle <= 0) or (not isRight and angle >= 0):
+            if (isRight and cur_angle <= 0) or (not isRight and cur_angle >= 0):
                 break
             
-            speed_l = 0 if left_power == 0 else -self.ease_out_speed(cur_angle, angle, 2*left_power)
-            speed_r = 0 if right_power == 0 else -self.ease_out_speed(cur_angle, angle, 2*right_power)
+            speed_l = 0 if left_power == 0 else MINN_SPEED + (2*left_power - MINN_SPEED) * (1 - math.cos(math.pi * cur_angle/angle)) / 2
+            speed_r = 0 if right_power == 0 else MINN_SPEED + (2*right_power - MINN_SPEED) * (1 - math.cos(math.pi * cur_angle/angle)) / 2
             
-            self.robot_movement.adjust_speed(speed_l, speed_r)
+            self.robot_movement.adjust_speed(-speed_l, -speed_r)
             sleep(0.01)
 
         self.robot_movement.adjust_speed(10, 10)
@@ -106,11 +107,3 @@ class PackageDiscovery:
         sleep(1)
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.2)
-
-    def ease_out_speed(self, angle, max_angle, max_speed):
-        """Returns a scaled speed that eases out as angle -> 0."""
-        x = min(abs(angle) / abs(max_angle), 1.0)
-
-        factor = math.sin(x * (math.pi / 2))
-
-        return max_speed * factor
