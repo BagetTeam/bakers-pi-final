@@ -109,11 +109,14 @@ class LineTracker:
 
             while True:
                 color = self.color_sensor.get_current_color()
+                rgb = self.color_sensor.get_current_rgb()
+                ratio = self.get_ratio(rgb)
+                print(f"ratio: {ratio}")
+
+                if seen_white and seen_black and ratio < 0.5:
+                    break
 
                 if color == "WHITE":
-                    if seen_white and seen_black:
-                        break
-
                     seen_white = True
 
                 if seen_white and color == "BLACK":
