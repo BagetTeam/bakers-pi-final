@@ -1,5 +1,6 @@
 from color_sensor.color_sensor import ColorSensor
 from gyro_sensor.gyro_sensor import GyroSensor
+from stop_button.stop_button import StopButton
 from package_discovery.package_discovery import PackageDiscovery
 from package_discovery.test_package_discovery import PackageDiscoveryTest
 from utils.sound import Sound
@@ -26,11 +27,10 @@ MOTOR_LEFT = Motor("A")
 MOTOR_RIGHT = Motor("D")
 MOTOR_DELIVERY = Motor("C")
 SOUND = Sound(1, 100, "C4")
-wait_ready_sensors(True)
-
-
 COLOR_SENSOR = ColorSensor(COLOR)
 GYRO_SENSOR = GyroSensor(GYRO)
+STOP_BUTTON = StopButton(TOUCH1)
+wait_ready_sensors(True)
 
 DELIVERY_SYSTEM = DeliverySystem(MOTOR_DELIVERY, COLOR_SENSOR, MOTOR_RIGHT, SOUND)
 ROBOT_MOVEMENT = RobotMovement(MOTOR_LEFT, MOTOR_RIGHT, GYRO_SENSOR)
@@ -41,7 +41,7 @@ ZONE_DETECTION = ZoneDetection(
     COLOR_SENSOR, DELIVERY_SYSTEM, ROBOT_MOVEMENT, DISCOVERY_SYSTEM
 )
 LINE_TRACKER = linetracker.LineTracker(
-    ROBOT_MOVEMENT, COLOR_SENSOR, GYRO, ZONE_DETECTION
+    ROBOT_MOVEMENT, COLOR_SENSOR, GYRO, ZONE_DETECTION, STOP_BUTTON
 )
 
 
@@ -63,12 +63,16 @@ def main(test: str):
             package_discovery_test.test()
         else:
             print("what the helly is ts test")
-    except BaseException:
+    except KeyboardInterrupt:
+        print("STOP BUTTON PRESSED/ Ctrl-C - EXITING")
+    except BaseException as e:
         print("WHYYYYYYYYY hello world")
+        print(e)
         pass
     finally:
         print("Done testing")
         COLOR_SENSOR.dispose()
+        STOP_BUTTON.dispose()
         reset_brick()  # Turn off everything on the brick's hardware, and reset it
         exit()
 
