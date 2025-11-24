@@ -67,7 +67,7 @@ class PackageDiscovery:
         isRight = True if left_power > right_power else False
         package_found = False
         self.robot_movement.adjust_speed(left_power, right_power)
-        MINN_SPEED = 5
+        MINN_SPEED = 10
 
         while abs(self.gyro_sensor.get_angle()) < abs(angle):
             if self.color_sensor.get_current_color() == "GREEN":
@@ -113,14 +113,13 @@ class PackageDiscovery:
     def delivery_package(self):
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.2)
-        self.robot_movement.adjust_speed(0, -10)
+        self.robot_movement.adjust_speed(0, -20)
         sleep(1)
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.5)
         self.delivery_system.deliver()
         sleep(0.5)
-        self.robot_movement.adjust_speed(0, 10)
+        self.robot_movement.adjust_speed(0, 20)
         sleep(1)
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.2)
-
