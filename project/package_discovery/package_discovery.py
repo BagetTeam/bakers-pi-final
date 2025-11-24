@@ -81,8 +81,8 @@ class PackageDiscovery:
             if (isRight and angle <= 0) or (not isRight and angle >= 0):
                 break
             
-            speed_l = 0 if left_power == 0 else self.ease_out_speed(cur_angle, angle, 2*left_power)
-            speed_r = 0 if right_power == 0 else self.ease_out_speed(cur_angle, angle, 2*right_power)
+            speed_l = 0 if left_power == 0 else -self.ease_out_speed(cur_angle, angle, 2*left_power)
+            speed_r = 0 if right_power == 0 else -self.ease_out_speed(cur_angle, angle, 2*right_power)
             
             self.robot_movement.adjust_speed(speed_l, speed_r)
             sleep(0.01)
