@@ -58,7 +58,7 @@ class LineTracker:
             ratio = self.get_ratio(rgb)
 
             self.robot_movement.adjust_left_speed(
-                L_POWER + (L_POWER / 2) * (ratio**2) / 0.20
+                L_POWER + (L_POWER / 2) * ratio / 0.20
             )
 
             if ratio > 0.80:
@@ -66,7 +66,7 @@ class LineTracker:
                 print(self.turn_count)
 
                 if self.turn_count % 4 != 3:
-                    if n_delivery == 2 and self.turn_count == 13:
+                    if n_delivery == 2 and self.turn_count == 15:
                         self.robot_movement.adjust_speed(R_POWER + 5, R_POWER)
                         sleep(0.2)
                         self.robot_movement.adjust_speed(L_POWER, R_POWER)
@@ -77,7 +77,7 @@ class LineTracker:
                         self.robot_movement.adjust_speed(L_POWER, R_POWER)
                 else:
                     if n_delivery == 2:
-                        if self.turn_count == 7 or self.turn_count == 15:
+                        if self.turn_count == 7 or self.turn_count == 17:
                             self.turn_right(90)
                     else:
                         self.robot_movement.adjust_speed(R_POWER + 5, R_POWER)
@@ -127,6 +127,5 @@ class LineTracker:
 
                 sleep(0.01)
 
-        self.sound_engine.play_effect("TURNING")
-        self.robot_movement.intersection_turn_right(deg)
+        # self.sound_engine.play_effect("TURNING")
         self.zone_detection.enabled = True
