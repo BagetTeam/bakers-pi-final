@@ -55,7 +55,7 @@ class PackageDiscovery:
             sleep(0.2)
 
             self.robot_movement.adjust_speed(10, 10)
-            sleep(0.4)
+            sleep(0.5)
             self.robot_movement.adjust_speed(0, 0)
 
         # Backtrack
@@ -84,12 +84,8 @@ class PackageDiscovery:
         sleep(0.5)
 
         angle = self.gyro_sensor.get_angle()
-        while True:
-            cur_angle = self.gyro_sensor.get_angle()
-
-            if (isRight and cur_angle <= 0) or (not isRight and cur_angle >= 0):
-                break
-
+        self.gyro_sensor.set_reference()
+        while (cur_angle:=abs(self.gyro_sensor.get_angle())) < abs(angle):
             speed_l = (
                 0
                 if left_power == 0
