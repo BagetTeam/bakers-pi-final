@@ -1,5 +1,5 @@
+from gyro_sensor.gyro_sensor import GyroSensor
 from zone_detection.zone_detection import ZoneDetection
-from utils.brick import EV3GyroSensor, Motor, TouchSensor
 from robot_movement.robot_movement import RobotMovement
 from color_sensor.color_sensor import ColorSensor
 from stop_button.stop_button import StopButton
@@ -10,7 +10,7 @@ class LineTracker:
     stop_button: StopButton
     color_sensor: ColorSensor
     robot_movement: RobotMovement
-    gyro: EV3GyroSensor
+    gyro: GyroSensor
     isLeft: bool
     zone_detection: ZoneDetection
     turn_count: int = 0
@@ -20,7 +20,7 @@ class LineTracker:
         self,
         robot_movement: RobotMovement,
         color_sensor: ColorSensor,
-        gyro: EV3GyroSensor,
+        gyro: GyroSensor,
         zone_detection: ZoneDetection,
         stop_button: StopButton,
     ):
@@ -32,42 +32,52 @@ class LineTracker:
         self.zone_detection = zone_detection
 
     def follow_line(self):
-        R_POWER = 20
-        L_POWER = 10
+        R_POWER = 30
+        L_POWER = 20
 
         self.robot_movement.adjust_speed(L_POWER, R_POWER)
+        n_delivery = 0
 
         while True:
-            # if self.stop_button.was_pressed:
-            #     self.robot_movement.adjust_speed(0, 0)
-            #     print("STOP BUTTON PRESSED - STOPPING LINE TRACKING")
-            #     break
-
             rgb = self.color_sensor.get_current_rgb()
             color = self.color_sensor.get_current_color()
 
             if color == "ORANGE" and self.zone_detection.enabled:
-                self.zone_detection.detect_zone()
+                if n_delivery == 2:
+                    raise Exception("Done")
+
+                if self.zone_detection.detect_zone():
+                    n_delivery += 1
                 self.robot_movement.adjust_speed(L_POWER, R_POWER)
 
             ratio = self.get_ratio(rgb)
 
             self.robot_movement.adjust_left_speed(
-                L_POWER + (L_POWER / 2) * ratio / 0.16
+                L_POWER + (L_POWER / 2) * (ratio**2) / 0.20
             )
 
-            if ratio > 0.8:
+            if ratio > 0.80:
                 self.turn_count += 1
                 print(self.turn_count)
 
                 if self.turn_count % 4 != 3:
-                    self.turn_right(92)
-                    sleep(0.1)
-                    self.robot_movement.adjust_speed(L_POWER, R_POWER)
+                    if n_delivery == 2 and self.turn_count == 13:
+                        self.robot_movement.adjust_speed(R_POWER + 5, R_POWER)
+                        sleep(0.2)
+                        self.robot_movement.adjust_speed(L_POWER, R_POWER)
+                        self.turn_count += 1
+                    else:
+                        self.turn_right(90)
+                        sleep(0.1)
+                        self.robot_movement.adjust_speed(L_POWER, R_POWER)
                 else:
-                    self.robot_movement.adjust_speed(R_POWER, R_POWER)
-                    sleep(1)
-                    self.robot_movement.adjust_speed(L_POWER, R_POWER)
+                    if n_delivery == 2:
+                        if self.turn_count == 7 or self.turn_count == 15:
+                            self.turn_right(90)
+                    else:
+                        self.robot_movement.adjust_speed(R_POWER + 5, R_POWER)
+                        sleep(0.2)
+                        self.robot_movement.adjust_speed(L_POWER, R_POWER)
 
             sleep(0.01)
 
@@ -85,5 +95,28 @@ class LineTracker:
 
     def turn_right(self, deg: int):
         print("turning right")
-        self.robot_movement.intersection_turn_right(deg)
+
+        if any(i == self.turn_count for i in [1, 5, 8, 13]):
+            self.robot_movement.intersection_turn_right(deg)
+        else:
+            self.robot_movement.adjust_speed(30, -5)
+            self.gyro.set_reference()
+
+            seen_white = False
+            seen_black = False
+
+            while True:
+                color = self.color_sensor.get_current_color()
+
+                if color == "WHITE":
+                    if seen_white and seen_black:
+                        break
+
+                    seen_white = True
+
+                if seen_white and color == "BLACK":
+                    seen_black = True
+
+                sleep(0.01)
+
         self.zone_detection.enabled = True

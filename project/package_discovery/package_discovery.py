@@ -1,3 +1,4 @@
+import math
 from time import sleep
 from color_sensor.color_sensor import ColorSensor
 from gyro_sensor.gyro_sensor import GyroSensor
@@ -37,20 +38,20 @@ class PackageDiscovery:
             print("Advance:", advances)
             # Check left
             print("Checking LEFT")
-            package_found = self.look_sides(0, BASE_R, 50)
+            package_found = self.look_sides(0, BASE_R, 70)
             self.robot_movement.adjust_speed(0, 0)
-            sleep(0.5)
+            sleep(0.2)
             if package_found:  # early exit
                 break
 
             print("Checking RIGHT")
             # Check right
-            package_found = self.look_sides(BASE_L, 0, 50)
+            package_found = self.look_sides(BASE_L, 0, 70)
             self.robot_movement.adjust_speed(0, 0)
-            sleep(0.5)
+            sleep(0.2)
 
             self.robot_movement.adjust_speed(10, 10)
-            sleep(0.5)
+            sleep(0.4)
             self.robot_movement.adjust_speed(0, 0)
 
         # Backtrack
@@ -60,11 +61,14 @@ class PackageDiscovery:
         self.robot_movement.a_bit_forward()
         self.robot_movement.adjust_speed(0, 0)
 
+        return package_found
+
     def look_sides(self, left_power: float, right_power: float, angle: float) -> bool:
         isRight = True if left_power > right_power else False
+        MINN_SPEED = max(right_power, left_power)
         package_found = False
-        self.robot_movement.adjust_speed(left_power, right_power)
 
+        self.robot_movement.adjust_speed(left_power, right_power)
         while abs(self.gyro_sensor.get_angle()) < abs(angle):
             if self.color_sensor.get_current_color() == "GREEN":
                 package_found = True
@@ -74,18 +78,31 @@ class PackageDiscovery:
             sleep(0.01)
         sleep(0.5)
 
-        self.robot_movement.adjust_speed(-left_power, -right_power)
-        if isRight:
-            while self.gyro_sensor.get_angle() > 0:
-                sleep(0.01)
-        else:
-            while self.gyro_sensor.get_angle() < 0:
-                sleep(0.01)
+        angle = self.gyro_sensor.get_angle()
+        while True:
+            cur_angle = self.gyro_sensor.get_angle()
 
-        # cur_ref = self.gyro_sensor.get_reference()
-        # self.robot_movement.turn_specific_with_angle(20, 0, 20)
-        # self.robot_movement.turn_specific_with_angle(20, 20, 0)
-        # self.gyro_sensor.set_reference(cur_ref)
+            if (isRight and cur_angle <= 0) or (not isRight and cur_angle >= 0):
+                break
+
+            speed_l = (
+                0
+                if left_power == 0
+                else MINN_SPEED
+                + (2 * left_power - MINN_SPEED)
+                * math.sin(math.pi * abs(cur_angle / angle))
+            )
+            speed_r = (
+                0
+                if right_power == 0
+                else MINN_SPEED
+                + (2 * right_power - MINN_SPEED)
+                * math.sin(math.pi * abs(cur_angle / angle))
+            )
+
+            self.robot_movement.adjust_speed(-speed_l, -speed_r)
+            sleep(0.01)
+
         self.robot_movement.adjust_speed(10, 10)
         sleep(0.4)
         self.robot_movement.adjust_speed(0, 0)
@@ -95,13 +112,13 @@ class PackageDiscovery:
     def delivery_package(self):
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.2)
-        self.robot_movement.adjust_speed(-10, -10)
+        self.robot_movement.adjust_speed(0, -20)
         sleep(1)
         self.robot_movement.adjust_speed(0, 0)
-        sleep(1)
+        sleep(0.5)
         self.delivery_system.deliver()
         sleep(0.5)
-        self.robot_movement.adjust_speed(10, 10)
+        self.robot_movement.adjust_speed(0, 20)
         sleep(1)
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.2)

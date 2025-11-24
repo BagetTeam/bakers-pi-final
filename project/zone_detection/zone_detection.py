@@ -34,8 +34,9 @@ class ZoneDetection:
 
     def detect_zone(self):
         self.movement.adjust_speed(0, 0)
-        self.discover_color()
+        has_found = self.discover_color()
         self.enabled = False
+        return has_found
 
     def discover_color(self):
         print("discovering")
@@ -57,11 +58,13 @@ class ZoneDetection:
 
         t.join()
 
+        package_found = False
         if not self.has_found_red:
-            self.package_discorvery.explore_room()
+            package_found = self.package_discorvery.explore_room()
 
         self.__backtrack()
         self.is_discovering = False
+        return package_found
 
     def __backtrack(self):
         self.movement.set_limits(20)
