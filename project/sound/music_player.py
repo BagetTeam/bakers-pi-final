@@ -5,10 +5,10 @@ import simpleaudio as sa
 
 class MusicLooper:
     def __init__(self):
-        self.bg_path = Path("background.wav")
+        self.bg_path = Path("sounds/background.wav")
         self.effects = {
-            "TURNING": Path("delivery.wav"),
-            "DELIVERY": Path("delivery.wav"),
+            "TURNING": Path("sounds/delivery.wav"),
+            "DELIVERY": Path("sounds/delivery.wav"),
         }
         if not self.bg_path.exists():
             raise FileNotFoundError(self.bg_path)
@@ -146,8 +146,6 @@ if __name__ == "__main__":
     # Demo:
     # - Put two WAV files in the project (background.wav and effect.wav).
     # - Run: python demo/loop_with_effect.py
-    BG = "project/background.wav"  # replace with your background WAV path
-    EFFECT = "project/effect.wav"  # replace with your effect WAV path
 
     looper = MusicLooper()
     looper.start()
