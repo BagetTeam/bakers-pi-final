@@ -6,6 +6,7 @@ from package_discovery.test_package_discovery import PackageDiscoveryTest
 from utils.sound import Sound
 from robot_delivery.delivery_system import DeliverySystem
 from robot_movement.robot_movement import RobotMovement
+from sound.music_player import MusicLooper
 from utils.brick import (
     EV3GyroSensor,
     Motor,
@@ -19,6 +20,7 @@ import sys
 
 from zone_detection.zone_detection import ZoneDetection
 
+
 TOUCH1 = TouchSensor(1)
 # TOUCH2 = TouchSensor(2)
 COLOR = EV3ColorSensor(3)
@@ -30,24 +32,27 @@ SOUND = Sound(1, 100, "C4")
 COLOR_SENSOR = ColorSensor(COLOR)
 GYRO_SENSOR = GyroSensor(GYRO)
 STOP_BUTTON = StopButton(TOUCH1)
+SOUNDENGINE = MusicLooper()
 wait_ready_sensors(True)
 
-DELIVERY_SYSTEM = DeliverySystem(MOTOR_DELIVERY, COLOR_SENSOR, MOTOR_RIGHT, SOUND)
+DELIVERY_SYSTEM = DeliverySystem(MOTOR_DELIVERY, COLOR_SENSOR, MOTOR_RIGHT)
 ROBOT_MOVEMENT = RobotMovement(MOTOR_LEFT, MOTOR_RIGHT, GYRO_SENSOR)
 DISCOVERY_SYSTEM = PackageDiscovery(
-    GYRO_SENSOR, COLOR_SENSOR, ROBOT_MOVEMENT, DELIVERY_SYSTEM
+    GYRO_SENSOR, COLOR_SENSOR, ROBOT_MOVEMENT, DELIVERY_SYSTEM, SOUNDENGINE
 )
 ZONE_DETECTION = ZoneDetection(
     COLOR_SENSOR, DELIVERY_SYSTEM, ROBOT_MOVEMENT, DISCOVERY_SYSTEM
 )
 LINE_TRACKER = linetracker.LineTracker(
-    ROBOT_MOVEMENT, COLOR_SENSOR, GYRO_SENSOR, ZONE_DETECTION, STOP_BUTTON
+    ROBOT_MOVEMENT, COLOR_SENSOR, GYRO_SENSOR, ZONE_DETECTION, STOP_BUTTON, SOUNDENGINE
 )
 
 
 def main(test: str):
     # movement_test = robot_move_test.MovementTest(TOUCH1, TOUCH2, MOTOR1, MOTOR2)
     try:
+        SOUNDENGINE.start()
+        print("Background music started")
         if test == "line":
             line_tracker_test = test_linetracker.LineTrackingTest(LINE_TRACKER)
             line_tracker_test.test(10, 10)

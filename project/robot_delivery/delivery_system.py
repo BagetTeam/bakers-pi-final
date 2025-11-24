@@ -1,20 +1,20 @@
 from time import sleep
 from color_sensor.color_sensor import ColorSensor
 from utils.brick import Motor
-from utils.sound import Sound
+# from utils.sound import Sound
 
 
 class DeliverySystem:
     delivery_motor: Motor
     sensor: ColorSensor
-    sound: Sound
+    # sound: Sound
 
     is_active: bool = True
     deg: int = 0
     has_first_been_pushed = False
 
     def __init__(
-        self, motor: Motor, sensor: ColorSensor, right_motor: Motor, sound: Sound
+        self, motor: Motor, sensor: ColorSensor, right_motor: Motor
     ):
         print("initializing delivery system")
 
@@ -22,7 +22,7 @@ class DeliverySystem:
         self.delivery_motor.set_limits(30)
         self.right_motor = right_motor
         self.sensor = sensor
-        self.sound = sound
+        # self.sound_engine = sound_engine
 
         self.delivery_motor.reset_encoder()  # Ensure we start from position 0
 
@@ -30,8 +30,8 @@ class DeliverySystem:
         print("DELIVERING")
         self.push()
 
-        self.sound.play()
-        self.sound.wait_done()
+        # self.sound.play()
+        # self.sound.wait_done()
         # self.right_motor.wait_is_stopped()
 
     # piston-like delivery system

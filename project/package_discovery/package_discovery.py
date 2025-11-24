@@ -4,6 +4,7 @@ from color_sensor.color_sensor import ColorSensor
 from gyro_sensor.gyro_sensor import GyroSensor
 from robot_delivery.delivery_system import DeliverySystem
 from robot_movement.robot_movement import RobotMovement
+from sound.music_player import MusicLooper
 
 
 class PackageDiscovery:
@@ -11,6 +12,7 @@ class PackageDiscovery:
     robot_movement: RobotMovement
     gyro_sensor: GyroSensor
     delivery_system: DeliverySystem
+    sound_engine: MusicLooper
 
     def __init__(
         self,
@@ -18,11 +20,13 @@ class PackageDiscovery:
         color_sensor: ColorSensor,
         robot_movement: RobotMovement,
         delivery_system: DeliverySystem,
+        sound_engine: MusicLooper,
     ):
         self.color_sensor = color_sensor
         self.robot_movement = robot_movement
         self.gyro_sensor = gyro_sensor
         self.delivery_system = delivery_system
+        self.sound_engine = sound_engine
 
     def explore_room(self):
         BASE_L = 20
@@ -69,6 +73,7 @@ class PackageDiscovery:
         package_found = False
 
         self.robot_movement.adjust_speed(left_power, right_power)
+        self.gyro_sensor.set_reference()
         while abs(self.gyro_sensor.get_angle()) < abs(angle):
             if self.color_sensor.get_current_color() == "GREEN":
                 package_found = True
@@ -117,6 +122,7 @@ class PackageDiscovery:
         self.robot_movement.adjust_speed(0, 0)
         sleep(0.5)
         self.delivery_system.deliver()
+        self.sound_engine.play_effect("DELIVERY")
         sleep(0.5)
         self.robot_movement.adjust_speed(0, 20)
         sleep(1)
