@@ -50,6 +50,10 @@ class LineTracker:
                 if n_delivery == 2:
                     self.robot_movement.adjust_speed(R_POWER, R_POWER)
                     sleep(2.2)
+                    
+                    self.robot_movement.adjust_speed(0, 0)
+                    self.sound_engine.play_effect("FINISH")
+                    sleep(3)
                     raise Exception("Done")
 
                 if self.zone_detection.detect_zone():
