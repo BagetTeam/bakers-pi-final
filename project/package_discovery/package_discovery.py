@@ -53,7 +53,7 @@ class PackageDiscovery:
             self.robot_movement.adjust_speed(0, 0)
             sleep(0.2)
 
-            self.robot_movement.adjust_speed(10, 10)
+            self.robot_movement.adjust_speed(15, 15)
             sleep(0.5)
             self.robot_movement.adjust_speed(0, 0)
 
@@ -79,7 +79,7 @@ class PackageDiscovery:
             )
             print("look_sides ratio", ratio)
 
-            if ratio < 0.6:
+            if ratio < 0.8:
                 package_found = True
                 print("PACKAGE FOUUND")
                 self.delivery_package()
@@ -89,7 +89,7 @@ class PackageDiscovery:
         angle = self.gyro_sensor.get_angle()
         self.gyro_sensor.set_reference()
         while (cur_angle := abs(self.gyro_sensor.get_angle())) < abs(angle) + (
-            5 if isRight else -5
+            5 if isRight else 0
         ):
             speed_l = (
                 0

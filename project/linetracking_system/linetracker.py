@@ -36,7 +36,7 @@ class LineTracker:
 
     def follow_line(self):
         R_POWER = 30
-        L_POWER = 20
+        L_POWER = 25  # 20 if low power, else 25
 
         self.robot_movement.adjust_speed(L_POWER, R_POWER)
         n_delivery = 0
@@ -67,7 +67,7 @@ class LineTracker:
                 print(f"self.turn_count: {self.turn_count}")
 
                 if self.turn_count % 4 != 3:
-                    if n_delivery == 2 and self.turn_count == 15:
+                    if n_delivery == 2 and self.turn_count == 13:
                         self.robot_movement.adjust_speed(R_POWER, R_POWER)
                         sleep(0.3)
                         self.robot_movement.adjust_speed(L_POWER, R_POWER)
@@ -78,7 +78,7 @@ class LineTracker:
                         self.robot_movement.adjust_speed(L_POWER, R_POWER)
                 else:
                     if n_delivery == 2 and (
-                        self.turn_count == 7 or self.turn_count == 17
+                        self.turn_count == 7 or self.turn_count == 15
                     ):
                         self.turn_right(90)
                         sleep(0.1)
@@ -98,7 +98,7 @@ class LineTracker:
             self.robot_movement.intersection_turn_right(deg)
         else:
             self.gyro.set_reference()
-            self.robot_movement.adjust_speed(30, -5)
+            self.robot_movement.adjust_speed(30, -10)  # -5 if low power, -10
 
             seen_white = False
             seen_black = False

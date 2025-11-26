@@ -78,6 +78,7 @@ def main(test: str):
         print("Done testing")
         COLOR_SENSOR.dispose()
         STOP_BUTTON.dispose()
+        DELIVERY_SYSTEM.reset()
         reset_brick()  # Turn off everything on the brick's hardware, and reset it
         exit()
 

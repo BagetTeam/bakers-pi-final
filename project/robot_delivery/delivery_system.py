@@ -37,8 +37,12 @@ class DeliverySystem:
         print("pushing thing")
         if self.has_first_been_pushed:
             self.delivery_motor.set_position(0)
-            sleep(2)
+            sleep(1)
 
-        self.delivery_motor.set_position(-115)
+        self.delivery_motor.set_position(-120)
         sleep(1)
         self.has_first_been_pushed = True
+
+    def reset(self):
+        self.delivery_motor.set_position(0)
+        sleep(1)
