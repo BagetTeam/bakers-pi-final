@@ -29,8 +29,8 @@ class PackageDiscovery:
         self.sound_engine = sound_engine
 
     def explore_room(self):
-        BASE_L = 30
-        BASE_R = 30
+        BASE_L = 40
+        BASE_R = 40
         advance_time = 0.5
 
         package_found = False
@@ -44,7 +44,6 @@ class PackageDiscovery:
             print("Checking LEFT")
             package_found = self.look_sides(0, BASE_R, 70)
             self.robot_movement.adjust_speed(0, 0)
-            sleep(0.2)
             if package_found:  # early exit
                 break
 
@@ -86,11 +85,12 @@ class PackageDiscovery:
                 self.delivery_package()
                 break
             sleep(0.01)
-        sleep(0.5)
 
         angle = self.gyro_sensor.get_angle()
         self.gyro_sensor.set_reference()
-        while (cur_angle := abs(self.gyro_sensor.get_angle())) < abs(angle):
+        while (cur_angle := abs(self.gyro_sensor.get_angle())) < abs(angle) + (
+            5 if isRight else -5
+        ):
             speed_l = (
                 0
                 if left_power == 0
