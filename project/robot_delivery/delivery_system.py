@@ -17,7 +17,7 @@ class DeliverySystem:
         print("initializing delivery system")
 
         self.delivery_motor = motor
-        self.delivery_motor.set_limits(30)
+        self.delivery_motor.set_limits(20)
         self.right_motor = right_motor
         self.sensor = sensor
         # self.sound_engine = sound_engine
