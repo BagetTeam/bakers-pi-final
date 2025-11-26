@@ -9,8 +9,8 @@ class MusicLooper:
         self.bg_path = Path("sounds/background.wav")
         self.effects = {
             "TURNING": Path("sounds/delivery.wav"),
-            "DELIVERY": Path("sounds/fart-with-extra-reverb-mp3cutnet_TT5ptZFY.wav"),
-            "FINISH": Path("sounds/eero (mp3cut.net).wav"),
+            "FINISH": Path("sounds/what-is-this-diddy-blud-doing-on-the (mp3cut.net).wav"),
+            "DELIVERY": Path("sounds/WE-ARE-CHARLIE-KIRK (mp3cut.net).wav"),
         }
         if not self.bg_path.exists():
             raise FileNotFoundError(self.bg_path)
@@ -164,9 +164,10 @@ if __name__ == "__main__":
         while True:
             time.sleep(2)
             print("Playing effect...")
-            looper.play_effect("TURNING")
+            looper.play_effect("DELIVERY")
             print("Effect done; background resumed.")
             time.sleep(4)
+            looper.play_effect("FINISH")
             print("finished waiting cycle")
     except KeyboardInterrupt:
         print("Stopping...")
