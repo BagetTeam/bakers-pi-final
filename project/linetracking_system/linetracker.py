@@ -46,11 +46,11 @@ class LineTracker:
             color = self.color_sensor.get_current_color()
             print(f"color: {color}")
 
-            if color == "ORANGE" and self.zone_detection.enabled:
+            if (color == "ORANGE" or color == "YELLOW") and self.zone_detection.enabled:
                 if n_delivery == 2:
                     self.robot_movement.adjust_speed(R_POWER, R_POWER)
                     sleep(2.2)
-                    
+
                     self.robot_movement.adjust_speed(0, 0)
                     self.sound_engine.play_effect("FINISH")
                     sleep(3)
@@ -66,7 +66,7 @@ class LineTracker:
                 L_POWER + (L_POWER / 2) * (ratio**2) / 0.20
             )
 
-            if ratio > 0.80:
+            if ratio > 0.85:
                 self.turn_count += 1
                 print(f"self.turn_count: {self.turn_count}")
 
