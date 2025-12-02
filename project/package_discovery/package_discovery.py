@@ -33,11 +33,11 @@ class PackageDiscovery:
         BASE_R = 30
         advance_time = 0.5
 
-        package_found = False
+        package_found = 0
         advances = 0
         self.gyro_sensor.set_reference()
         print("GOING WITH REFERENCE:", self.gyro_sensor.get_reference())
-        while not package_found and advances < 10:
+        while package_found == 0 and advances < 10:
             advances += 1
             print("Advance:", advances)
             # Check left
@@ -45,7 +45,7 @@ class PackageDiscovery:
             package_found = self.look_sides(0, BASE_R, 70)
             self.robot_movement.adjust_speed(0, 0)
             sleep(0.2)
-            if package_found:  # early exit
+            if package_found != 0:  # early exit
                 break
 
             print("Checking RIGHT")
@@ -70,18 +70,20 @@ class PackageDiscovery:
     def look_sides(self, left_power: float, right_power: float, angle: float) -> bool:
         isRight = True if left_power > right_power else False
         MINN_SPEED = max(right_power, left_power)
-        package_found = False
+        package_found = 0
 
         self.robot_movement.adjust_speed(left_power, right_power)
         self.gyro_sensor.set_reference()
         while abs(self.gyro_sensor.get_angle()) < abs(angle):
-            ratio = self.color_sensor.get_ratio(
+            ratio_green = self.color_sensor.get_ratio(
                 self.color_sensor.get_rgb(), "YELLOW", "GREEN"
             )
-            print("look_sides ratio", ratio)
-
-            if ratio < 0.6:
-                package_found = True
+            
+            print("Ratio green:", ratio_green)
+            if self.color_sensor.get_current_color() == "RED":
+                return -1  # exit room
+            if ratio_green < 0.6:
+                package_found = 1
                 print("PACKAGE FOUUND")
                 self.delivery_package()
                 break
