@@ -10,7 +10,7 @@ class MusicLooper:
         self.effects = {
             "TURNING": Path("sounds/delivery.wav"),
             "FINISH": Path("sounds/what-is-this-diddy-blud-doing-on-the (mp3cut.net).wav"),
-            "DELIVERY": Path("sounds/yeet-sound-effect (mp3cut (mp3cut.net).wav"),
+            "DELIVERY": Path("sounds/WE-ARE-CHARLIE-KIRK (mp3cut.net).wav"),
         }
         if not self.bg_path.exists():
             raise FileNotFoundError(self.bg_path)
