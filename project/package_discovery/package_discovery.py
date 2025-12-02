@@ -65,7 +65,7 @@ class PackageDiscovery:
         self.robot_movement.a_bit_forward()
         self.robot_movement.adjust_speed(0, 0)
 
-        return package_found
+        return True if package_found == 1 else False
 
     def look_sides(self, left_power: float, right_power: float, angle: float) -> bool:
         isRight = True if left_power > right_power else False
