@@ -66,7 +66,7 @@ class LineTracker:
                 L_POWER + (L_POWER / 2) * (ratio**2) / 0.20
             )
 
-            if ratio > 0.85:
+            if ratio > 0.90:
                 self.turn_count += 1
                 print(f"self.turn_count: {self.turn_count}")
 
@@ -102,7 +102,7 @@ class LineTracker:
             self.robot_movement.intersection_turn_right(deg)
         else:
             self.gyro.set_reference()
-            self.robot_movement.adjust_speed(30, -10)  # -5 if low power, -10
+            self.robot_movement.adjust_speed(30, -5)  # -5 if low power, -10
 
             seen_white = False
             seen_black = False
