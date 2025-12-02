@@ -9,8 +9,8 @@ class MusicLooper:
         self.bg_path = Path("sounds/background.wav")
         self.effects = {
             "TURNING": Path("sounds/delivery.wav"),
-            "FINISH": Path("sounds/what-is-this-diddy-blud-doing-on-the (mp3cut.net).wav"),
-            "DELIVERY": Path("sounds/WE-ARE-CHARLIE-KIRK (mp3cut.net).wav"),
+            "FINISH": Path("sounds/WE-ARE-CHARLIE-KIRK (mp3cut.net).wav"),
+            "DELIVERY": Path("sounds/yeet-sound-effect (mp3cut (mp3cut.net).wav"),
         }
         if not self.bg_path.exists():
             raise FileNotFoundError(self.bg_path)
@@ -112,10 +112,12 @@ class MusicLooper:
         effect = Path(effect_path)
         if not effect.exists():
             raise FileNotFoundError(effect)
-        
-        effect_thread = threading.Thread(target=self._play_effect_thread, args=(effect,), daemon=True)
+
+        effect_thread = threading.Thread(
+            target=self._play_effect_thread, args=(effect,), daemon=True
+        )
         effect_thread.start()
-        
+
     def _play_effect_thread(self, effect: Path):
         with self._effect_lock:
             # Pause background

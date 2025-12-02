@@ -17,7 +17,7 @@ class DeliverySystem:
         print("initializing delivery system")
 
         self.delivery_motor = motor
-        self.delivery_motor.set_limits(20)
+        self.delivery_motor.set_limits(10)
         self.right_motor = right_motor
         self.sensor = sensor
 
@@ -32,10 +32,10 @@ class DeliverySystem:
         print("pushing thing")
         if self.has_first_been_pushed:
             self.delivery_motor.set_position(0)
-            sleep(1)
+            sleep(1.5)
 
-        self.delivery_motor.set_position(-95)
-        sleep(1)
+        self.delivery_motor.set_position(-110)
+        sleep(1.5)
         self.has_first_been_pushed = True
 
     def reset(self):

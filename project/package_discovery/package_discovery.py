@@ -37,7 +37,7 @@ class PackageDiscovery:
         advances = 0
         self.gyro_sensor.set_reference()
         print("GOING WITH REFERENCE:", self.gyro_sensor.get_reference())
-        while package_found == 0 and advances < 7:
+        while package_found == 0 and advances < 8:
             advances += 1
             print("Advance:", advances)
             # Check left
@@ -93,10 +93,12 @@ class PackageDiscovery:
                 break
             sleep(0.01)
 
+        self.robot_movement.adjust_speed(0, 0)
+        sleep(0.15)
         angle = self.gyro_sensor.get_angle()
         self.gyro_sensor.set_reference()
         while (cur_angle := abs(self.gyro_sensor.get_angle())) < abs(angle) + (
-            5 if isRight else 0
+            0.5 if isRight else 0
         ):
             speed_l = (
                 0

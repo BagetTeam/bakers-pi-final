@@ -49,7 +49,7 @@ class LineTracker:
             if (color == "ORANGE" or color == "YELLOW") and self.zone_detection.enabled:
                 if n_delivery == 2:
                     self.robot_movement.adjust_speed(R_POWER, R_POWER)
-                    sleep(2.2)
+                    sleep(2)
 
                     self.robot_movement.adjust_speed(0, 0)
                     self.sound_engine.play_effect("FINISH")

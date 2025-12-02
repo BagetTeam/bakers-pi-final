@@ -57,12 +57,13 @@ class ZoneDetection:
     def __backtrack(self):
         sleep(0.5)
 
-        self.movement.turn_specific_with_angle(160, -20, 30)
+        self.movement.turn_specific_with_angle(170, -20, 30)
 
     def __move_around(self):
         self.movement.a_bit_forward()
         self.movement.adjust_speed(-25, -25)
-        sleep(0.75)
+        while self.color_sensor.get_current_color() != "ORANGE":
+            sleep(0.01)
         self.movement.adjust_speed(0, 0)
 
         self.stop = True
