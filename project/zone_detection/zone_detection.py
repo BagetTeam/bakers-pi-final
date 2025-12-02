@@ -44,19 +44,7 @@ class ZoneDetection:
 
         self.has_found_red = False
         self.stop = False
-        # t = Thread(target=self.__move_around)
-        # t.start()
-        #
-        # while not self.stop:
-        #     color = self.color_sensor.get_current_color()
-        #     if color == "RED":
-        #         self.has_found_red = True
-        #         self.stop = True
-        #         print("FOUND RED")
-        #
-        #     sleep(0.01)
-        #
-        # t.join()
+        self.__move_around()
 
         package_found = False
         if not self.has_found_red:
@@ -69,9 +57,12 @@ class ZoneDetection:
     def __backtrack(self):
         sleep(0.5)
 
-        self.movement.turn_specific_with_angle(178, -20, 30)
+        self.movement.turn_specific_with_angle(160, -20, 30)
 
     def __move_around(self):
         self.movement.a_bit_forward()
+        self.movement.adjust_speed(-25, -25)
+        sleep(0.75)
+        self.movement.adjust_speed(0, 0)
 
         self.stop = True

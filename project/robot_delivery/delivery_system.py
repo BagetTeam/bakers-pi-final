@@ -20,7 +20,6 @@ class DeliverySystem:
         self.delivery_motor.set_limits(20)
         self.right_motor = right_motor
         self.sensor = sensor
-        # self.sound_engine = sound_engine
 
         self.delivery_motor.reset_encoder()  # Ensure we start from position 0
 
@@ -28,18 +27,14 @@ class DeliverySystem:
         print("DELIVERING")
         self.push()
 
-        # self.sound.play()
-        # self.sound.wait_done()
-        # self.right_motor.wait_is_stopped()
-
     # piston-like delivery system
-    def push(self, power: int = 50, duration: float = 0.5):
+    def push(self):
         print("pushing thing")
         if self.has_first_been_pushed:
             self.delivery_motor.set_position(0)
             sleep(1)
 
-        self.delivery_motor.set_position(-120)
+        self.delivery_motor.set_position(-95)
         sleep(1)
         self.has_first_been_pushed = True
 

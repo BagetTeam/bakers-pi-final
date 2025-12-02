@@ -90,7 +90,7 @@ class RobotMovement:
         )
 
     def a_bit_forward(self):
-        self.turn_specific_with_angle(20, 0, 20)
+        self.turn_specific_with_angle(30, -20, 20)
         sleep(0.1)
-        self.turn_specific_with_angle(20, 20, 0)
+        self.turn_specific_with_angle(30, 20, 10)
         sleep(0.1)

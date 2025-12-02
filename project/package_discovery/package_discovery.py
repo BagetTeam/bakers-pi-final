@@ -37,25 +37,24 @@ class PackageDiscovery:
         advances = 0
         self.gyro_sensor.set_reference()
         print("GOING WITH REFERENCE:", self.gyro_sensor.get_reference())
-        while package_found == 0 and advances < 10:
+        while package_found == 0 and advances < 7:
             advances += 1
             print("Advance:", advances)
             # Check left
             print("Checking LEFT")
             package_found = self.look_sides(0, BASE_R, 70)
             self.robot_movement.adjust_speed(0, 0)
-            sleep(0.2)
+            sleep(0.1)
             if package_found != 0:  # early exit
                 break
 
             print("Checking RIGHT")
             # Check right
             package_found = self.look_sides(BASE_L, 0, 70)
-            self.robot_movement.adjust_speed(0, 0)
-            sleep(0.2)
 
+            # goes forward
             self.robot_movement.adjust_speed(15, 15)
-            sleep(0.5)
+            sleep(0.8)
             self.robot_movement.adjust_speed(0, 0)
 
         # Backtrack
@@ -67,7 +66,7 @@ class PackageDiscovery:
 
         return True if package_found == 1 else False
 
-    def look_sides(self, left_power: float, right_power: float, angle: float) -> bool:
+    def look_sides(self, left_power: float, right_power: float, angle: float) -> int:
         isRight = True if left_power > right_power else False
         MINN_SPEED = max(right_power, left_power)
         package_found = 0
@@ -78,11 +77,16 @@ class PackageDiscovery:
             ratio_green = self.color_sensor.get_ratio(
                 self.color_sensor.get_rgb(), "YELLOW", "GREEN"
             )
-            
-            print("Ratio green:", ratio_green)
-            if self.color_sensor.get_current_color() == "RED":
-                return -1  # exit room
-            if ratio_green < 0.8:
+
+            ratio_red = self.color_sensor.get_ratio(
+                self.color_sensor.get_rgb(), "YELLOW", "RED"
+            )
+
+            if ratio_red < 0.3:
+                print("IS RED EXITING")
+                package_found = -1  # exit room
+                break
+            elif ratio_green < 0.8:
                 package_found = 1
                 print("PACKAGE FOUUND")
                 self.delivery_package()
@@ -111,10 +115,6 @@ class PackageDiscovery:
 
             self.robot_movement.adjust_speed(-speed_l, -speed_r)
             sleep(0.01)
-
-        self.robot_movement.adjust_speed(10, 10)
-        sleep(0.4)
-        self.robot_movement.adjust_speed(0, 0)
 
         return package_found
 
