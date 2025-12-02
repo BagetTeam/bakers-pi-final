@@ -44,19 +44,19 @@ class ZoneDetection:
 
         self.has_found_red = False
         self.stop = False
-        t = Thread(target=self.__move_around)
-        t.start()
-
-        while not self.stop:
-            color = self.color_sensor.get_current_color()
-            if color == "RED":
-                self.has_found_red = True
-                self.stop = True
-                print("FOUND RED")
-
-            sleep(0.01)
-
-        t.join()
+        # t = Thread(target=self.__move_around)
+        # t.start()
+        #
+        # while not self.stop:
+        #     color = self.color_sensor.get_current_color()
+        #     if color == "RED":
+        #         self.has_found_red = True
+        #         self.stop = True
+        #         print("FOUND RED")
+        #
+        #     sleep(0.01)
+        #
+        # t.join()
 
         package_found = False
         if not self.has_found_red:
