@@ -38,7 +38,7 @@ class RobotMovement:
 
     def intersection_turn_right(self, deg: int):
         self.gyro_sensor.set_reference()
-        self.adjust_speed(30, -5)
+        self.adjust_speed(30, -8)
         while self.gyro_sensor.get_angle() < deg:
             sleep(0.01)
         self.adjust_speed(0, 0)

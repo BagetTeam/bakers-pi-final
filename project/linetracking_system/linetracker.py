@@ -102,7 +102,7 @@ class LineTracker:
             self.robot_movement.intersection_turn_right(deg)
         else:
             self.gyro.set_reference()
-            self.robot_movement.adjust_speed(30, -5)  # -5 if low power, -10
+            self.robot_movement.adjust_speed(30, -8)  # -5 if low power, -10
 
             seen_white = False
             seen_black = False
