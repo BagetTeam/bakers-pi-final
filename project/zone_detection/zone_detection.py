@@ -69,7 +69,7 @@ class ZoneDetection:
     def __backtrack(self):
         sleep(0.5)
 
-        self.movement.turn_specific_with_angle(180, -25, 30)
+        self.movement.turn_specific_with_angle(178, -20, 30)
 
     def __move_around(self):
         self.movement.a_bit_forward()

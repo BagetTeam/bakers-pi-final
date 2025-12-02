@@ -29,8 +29,8 @@ class PackageDiscovery:
         self.sound_engine = sound_engine
 
     def explore_room(self):
-        BASE_L = 30
-        BASE_R = 30
+        BASE_L = 40
+        BASE_R = 40
         advance_time = 0.5
 
         package_found = 0
@@ -54,7 +54,7 @@ class PackageDiscovery:
             self.robot_movement.adjust_speed(0, 0)
             sleep(0.2)
 
-            self.robot_movement.adjust_speed(10, 10)
+            self.robot_movement.adjust_speed(15, 15)
             sleep(0.5)
             self.robot_movement.adjust_speed(0, 0)
 
@@ -82,17 +82,18 @@ class PackageDiscovery:
             print("Ratio green:", ratio_green)
             if self.color_sensor.get_current_color() == "RED":
                 return -1  # exit room
-            if ratio_green < 0.6:
+            if ratio_green < 0.8:
                 package_found = 1
                 print("PACKAGE FOUUND")
                 self.delivery_package()
                 break
             sleep(0.01)
-        sleep(0.5)
 
         angle = self.gyro_sensor.get_angle()
         self.gyro_sensor.set_reference()
-        while (cur_angle := abs(self.gyro_sensor.get_angle())) < abs(angle):
+        while (cur_angle := abs(self.gyro_sensor.get_angle())) < abs(angle) + (
+            5 if isRight else 0
+        ):
             speed_l = (
                 0
                 if left_power == 0

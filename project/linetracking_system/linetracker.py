@@ -36,7 +36,7 @@ class LineTracker:
 
     def follow_line(self):
         R_POWER = 30
-        L_POWER = 20
+        L_POWER = 25  # 20 if low power, else 25
 
         self.robot_movement.adjust_speed(L_POWER, R_POWER)
         n_delivery = 0
@@ -46,11 +46,11 @@ class LineTracker:
             color = self.color_sensor.get_current_color()
             print(f"color: {color}")
 
-            if color == "ORANGE" and self.zone_detection.enabled:
+            if (color == "ORANGE" or color == "YELLOW") and self.zone_detection.enabled:
                 if n_delivery == 2:
                     self.robot_movement.adjust_speed(R_POWER, R_POWER)
                     sleep(2.2)
-                    
+
                     self.robot_movement.adjust_speed(0, 0)
                     self.sound_engine.play_effect("FINISH")
                     sleep(3)
@@ -66,12 +66,12 @@ class LineTracker:
                 L_POWER + (L_POWER / 2) * (ratio**2) / 0.20
             )
 
-            if ratio > 0.80:
+            if ratio > 0.90:
                 self.turn_count += 1
                 print(f"self.turn_count: {self.turn_count}")
 
                 if self.turn_count % 4 != 3:
-                    if n_delivery == 2 and self.turn_count == 15:
+                    if n_delivery == 2 and self.turn_count == 13:
                         self.robot_movement.adjust_speed(R_POWER, R_POWER)
                         sleep(0.3)
                         self.robot_movement.adjust_speed(L_POWER, R_POWER)
@@ -82,7 +82,7 @@ class LineTracker:
                         self.robot_movement.adjust_speed(L_POWER, R_POWER)
                 else:
                     if n_delivery == 2 and (
-                        self.turn_count == 7 or self.turn_count == 17
+                        self.turn_count == 7 or self.turn_count == 15
                     ):
                         self.turn_right(90)
                         sleep(0.1)
@@ -102,7 +102,7 @@ class LineTracker:
             self.robot_movement.intersection_turn_right(deg)
         else:
             self.gyro.set_reference()
-            self.robot_movement.adjust_speed(30, -5)
+            self.robot_movement.adjust_speed(30, -5)  # -5 if low power, -10
 
             seen_white = False
             seen_black = False
