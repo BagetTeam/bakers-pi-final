@@ -21,3 +21,6 @@ Cool sounds with an integrated speaker.
 
 # Demo
 [![Demo](https://img.youtube.com/vi/plpx3dQ-prg/0.jpg)](https://youtu.be/plpx3dQ-prg)
+
+
+# Built by the Bakers' PI team
