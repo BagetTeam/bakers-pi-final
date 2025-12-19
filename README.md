@@ -1,5 +1,5 @@
 # RoboDelivery
-A robot that delivers packages to rooms automatically! It looks through rooms without meetings (red pads) and finds the package landing pad (green pad) where the package is going to be delivered at.
+A robot that delivers packages to rooms automatically! It traverses the map, looks through rooms without meetings (red pads) and finds the package landing pad (green pad) where the package is going to be delivered at. After a succesful delivery, it returns back to the mail room (blue room), and celebrates.
 
 Cool sound effects added to the robot to give a nice ambiance when the robot is traveling and delivering packages, including a superb audio for when it finishes its job.
 
